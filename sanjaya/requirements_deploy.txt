@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+xgboost
+shap
+pandas
+scikit-learn
+joblib
+boto3
+requests
+python-dotenv
+langchain
+langgraph
+psycopg2-binary
+sqlalchemy

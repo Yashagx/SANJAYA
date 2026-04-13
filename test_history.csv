@@ -1,0 +1,11 @@
+vessel_id,origin,destination,days_real,days_scheduled,risk_level,delay_days,transport_mode,month
+MV-001,Mumbai,Dubai,4,3,LOW,1,sea,6
+MV-002,Chennai,Singapore,6,4,MEDIUM,2,sea,8
+MV-003,Delhi,Mumbai,3,2,HIGH,1,road,7
+MV-004,Khor Fakkan,Rotterdam,12,5,CRITICAL,7,sea,3
+MV-005,Shanghai,LA,8,6,MEDIUM,2,sea,11
+MV-006,Mumbai,Dubai,3,3,LOW,0,sea,2
+MV-007,Delhi,Chennai,4,3,MEDIUM,1,road,9
+MV-008,Chennai,Singapore,5,4,LOW,1,sea,4
+MV-009,Khor Fakkan,Rotterdam,10,5,HIGH,5,sea,4
+MV-010,Mumbai,London,15,10,CRITICAL,5,sea,3

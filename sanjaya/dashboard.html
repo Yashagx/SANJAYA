@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SANJAYA | Shipment Risk Intelligence</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#003fb1",
+                        "tertiary": "#004f72",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#c9e6ff",
+                        "on-surface-variant": "#434654",
+                        "on-secondary-container": "#54647a",
+                        "surface-container-low": "#f2f4f6",
+                        "primary-fixed-dim": "#b5c4ff",
+                        "on-background": "#191c1e",
+                        "surface-tint": "#1353d8",
+                        "surface-container-high": "#e6e8ea",
+                        "on-tertiary-fixed-variant": "#004c6e",
+                        "on-primary-fixed-variant": "#003dab",
+                        "tertiary-container": "#006895",
+                        "surface-variant": "#e0e3e5",
+                        "surface-container": "#eceef0",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "on-secondary-fixed": "#0b1c30",
+                        "on-primary-container": "#d4dcff",
+                        "secondary-container": "#d0e1fb",
+                        "inverse-surface": "#2d3133",
+                        "secondary-fixed": "#d3e4fe",
+                        "primary-fixed": "#dbe1ff",
+                        "on-tertiary-fixed": "#001e2f",
+                        "inverse-primary": "#b5c4ff",
+                        "on-primary-fixed": "#00174d",
+                        "secondary": "#505f76",
+                        "surface-bright": "#f7f9fb",
+                        "on-secondary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#89ceff",
+                        "surface": "#f7f9fb",
+                        "on-tertiary-container": "#bee2ff",
+                        "on-error": "#ffffff",
+                        "on-surface": "#191c1e",
+                        "error-container": "#ffdad6",
+                        "background": "#f7f9fb",
+                        "primary-container": "#1a56db",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "outline-variant": "#c3c5d7",
+                        "outline": "#737686",
+                        "surface-dim": "#d8dadc",
+                        "surface-container-highest": "#e0e3e5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+        /* Smooth transitions for all panels */
+        .panel-fade { transition: opacity 0.35s ease, transform 0.35s ease; }
+        .panel-fade.hidden-panel { opacity: 0; transform: translateY(12px); pointer-events: none; position: absolute; }
+        .panel-fade.visible-panel { opacity: 1; transform: translateY(0); pointer-events: auto; position: relative; }
+        /* Validation warning shake */
+        @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
+        .shake { animation: shake 0.5s ease; }
+        /* Mismatch warning banner */
+        .mismatch-banner { transition: max-height 0.3s ease, opacity 0.3s ease, margin 0.3s ease; overflow: hidden; }
+        .mismatch-banner.collapsed { max-height: 0; opacity: 0; margin-top: 0; margin-bottom: 0; }
+        .mismatch-banner.expanded { max-height: 120px; opacity: 1; }
+        /* Scenario button active ring */
+        .scenario-active { border-color: #003fb1 !important; background: rgba(0,63,177,0.06) !important; box-shadow: 0 0 0 2px rgba(0,63,177,0.15); }
+        /* Score counter animation */
+        @keyframes countUp { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
+        .score-animate { animation: countUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        /* LIVE Terminal */
+        @keyframes term-glow { 0%,100%{box-shadow:0 0 25px rgba(52,211,153,0.06),0 0 60px rgba(52,211,153,0.03)} 50%{box-shadow:0 0 35px rgba(52,211,153,0.12),0 0 80px rgba(52,211,153,0.06)} }
+        .live-terminal { animation: term-glow 3s ease-in-out infinite; }
+        @keyframes scanline { 0%{background-position:0 -100%} 100%{background-position:0 100%} }
+        .terminal-scan { background-image: linear-gradient(0deg, transparent 0%, rgba(52,211,153,0.03) 50%, transparent 100%); background-size: 100% 200%; animation: scanline 4s linear infinite; }
+        .ev-card { will-change: transform, opacity; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen">
+
+<!-- Side Navigation Bar â€” FIXED, z-40 -->
+<div class="fixed left-0 top-0 hidden lg:flex flex-col h-screen w-[72px] bg-white/90 backdrop-blur-xl border-r border-outline-variant/10 items-center py-5 space-y-6 z-40">
+<div class="w-11 h-11 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+<span class="text-white font-black text-lg">S</span>
+</div>
+<nav class="flex flex-col space-y-2 flex-grow">
+<a class="p-2.5 bg-primary/10 text-primary rounded-xl transition-all" href="#" title="Dashboard">
+<span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+</a>
+<a class="p-2.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-xl transition-all" href="#" title="Routes">
+<span class="material-symbols-outlined text-[22px]">public</span>
+</a>
+<a class="p-2.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-xl transition-all" href="#" title="Alerts">
+<span class="material-symbols-outlined text-[22px]">warning</span>
+</a>
+<a class="p-2.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-xl transition-all" href="#" title="Audits">
+<span class="material-symbols-outlined text-[22px]">fact_check</span>
+</a>
+<a class="p-2.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-xl transition-all" href="#" title="Analytics">
+<span class="material-symbols-outlined text-[22px]">analytics</span>
+</a>
+</nav>
+<div class="flex flex-col space-y-2">
+<a class="p-2.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-xl transition-all" href="#" title="Help">
+<span class="material-symbols-outlined text-[22px]">help</span>
+</a>
+<a class="p-2.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-xl transition-all" href="#" title="System">
+<span class="material-symbols-outlined text-[22px]">sensors</span>
+</a>
+</div>
+</div>
+
+<!-- Main wrapper â€” offset by sidebar width on large screens -->
+<div class="lg:ml-[72px]">
+
+<!-- Top Navigation â€” inside the wrapper so it doesn't overlap sidebar -->
+<header class="sticky top-0 z-30 glass-panel shadow-sm px-6 py-3 flex justify-between items-center w-full">
+<div class="flex items-center gap-3">
+<div class="bg-primary p-2 rounded-xl flex items-center justify-center lg:hidden">
+<span class="text-white font-black text-xl tracking-tighter">S</span>
+</div>
+<div>
+<h1 class="text-xl font-black text-slate-900 tracking-tighter leading-none">SANJAYA</h1>
+<p class="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mt-0.5">Shipment Risk Intelligence</p>
+</div>
+</div>
+<!-- Center Stat Pills -->
+<div class="hidden md:flex items-center gap-2">
+<div class="flex items-center gap-1.5 bg-surface-container px-2.5 py-1 rounded-full border border-outline-variant/10">
+<span class="text-[9px] font-bold text-on-surface-variant uppercase">Total</span>
+<span id="stat-total" class="text-xs font-bold text-primary">â€”</span>
+</div>
+<div class="flex items-center gap-1.5 bg-red-50 px-2.5 py-1 rounded-full border border-red-100">
+<span class="text-[9px] font-bold text-red-600 uppercase">Critical</span>
+<span id="stat-critical" class="text-xs font-bold text-red-600">â€”</span>
+</div>
+<div class="flex items-center gap-1.5 bg-orange-50 px-2.5 py-1 rounded-full">
+<span class="text-[9px] font-bold text-orange-600 uppercase">High</span>
+<span id="stat-high" class="text-xs font-bold text-orange-600">â€”</span>
+</div>
+<div class="flex items-center gap-1.5 bg-blue-50 px-2.5 py-1 rounded-full">
+<span class="text-[9px] font-bold text-primary uppercase">Avg RS</span>
+<span id="stat-avg" class="text-xs font-bold text-primary">â€”</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-1.5 px-2.5 py-1 bg-green-50 rounded-full border border-green-100">
+<span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+<span id="api-status" class="text-[9px] font-bold text-green-700 uppercase">Connecting...</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:bg-slate-100 p-1.5 rounded-full transition-colors text-[20px]">notifications</span>
+<img alt="User" class="w-7 h-7 rounded-full object-cover border border-outline-variant/30" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXDLpa-1ha4R6EjQrnmoM3_k2SaJSLh0agX2GrMew03ruG_Vl3p0AffW60U3UpRoHcKrc5zW29-S4sonUY3t1DYDcvwAOoLf_KdEqQfGRqtClrzg5DplQKxhrpvgXFNgehWPm4hUBfCY1Z5DiQZuIEsQ_TFzGH_4TUCRl6YMhxTrI-wKLVcKe4yiNBKuA-SlByP97Vu_kDloslgq8ovOSRwkxqSNYMThgwNHV8xT6q_wIDlAvUVyMNuJ-jnlhf8BfyBcPnwAmdxhc"/>
+</div>
+</header>
+
+<main class="max-w-[1520px] mx-auto p-5 space-y-5">
+
+<!-- BRAHMA NL Bar -->
+<div class="bg-white rounded-xl shadow-sm border border-outline-variant/15 p-4 flex gap-3 items-center">
+<div class="w-8 h-8 bg-gradient-to-br from-purple-600 to-indigo-700 rounded-lg flex items-center justify-center flex-shrink-0">
+<span class="text-white font-black text-sm">B</span>
+</div>
+<input id="nl-input" class="flex-1 bg-slate-50 border-none rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-300 transition-all" placeholder='Try: "Assess MV Chennai Star from Khor Fakkan to Rotterdam via Hormuz urgently"' type="text" onkeydown="if(event.key==='Enter')nlAssess()"/>
+<button id="nl-btn" onclick="nlAssess()" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-2.5 rounded-lg text-xs font-bold hover:shadow-lg transition-all flex items-center gap-1.5 flex-shrink-0">
+<span class="material-symbols-outlined text-sm">auto_awesome</span> Ask BRAHMA
+</button>
+</div>
+<div id="nl-sync-notif" style="display:none" class="mt-2 text-[10px] text-emerald-600 font-bold bg-emerald-50 px-3 py-1.5 rounded-lg"></div>
+
+<!-- CSV Upload Panel -->
+<div id="upload-panel" class="bg-white rounded-xl shadow-sm border border-outline-variant/15 p-5">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center"><span class="material-symbols-outlined text-emerald-700 text-lg">upload_file</span></div>
+<div>
+<p class="text-xs font-bold text-slate-700">Company Historical Data â€” BRAHMA Calibration</p>
+<p class="text-[10px] text-slate-400">Upload shipment CSV/Excel â†’ BRAHMA learns your patterns</p>
+</div>
+</div>
+<div id="upload-status-badge" class="hidden"><span class="bg-emerald-100 text-emerald-700 text-[9px] font-bold px-2 py-1 rounded-full flex items-center gap-1"><span class="material-symbols-outlined text-sm">check_circle</span> Data Loaded</span></div>
+</div>
+<div id="upload-dropzone" ondrop="handleDrop(event)" ondragover="event.preventDefault()" class="border-2 border-dashed border-slate-200 rounded-xl p-5 text-center hover:border-emerald-400 hover:bg-emerald-50/30 transition-all cursor-pointer" onclick="document.getElementById('file-input').click()">
+<input id="file-input" type="file" accept=".csv,.xlsx,.xls" class="hidden" onchange="handleFileUpload(event)"/>
+<span class="material-symbols-outlined text-3xl text-slate-300 mb-1">table_chart</span>
+<p class="text-xs font-semibold text-slate-500">Drop CSV or Excel file here</p>
+<p class="text-[10px] text-slate-400 mt-0.5">Shipment history, delay records, route performance</p>
+</div>
+<div id="upload-progress" style="display:none" class="mt-3 flex items-center gap-3">
+<div class="w-5 h-5 border-2 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"></div>
+<p class="text-xs text-slate-600">BRAHMA analyzing your data...</p>
+</div>
+<div id="upload-results" style="display:none" class="mt-3 space-y-3">
+<div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+<div class="flex items-center justify-between mb-2">
+<p class="text-xs font-bold text-emerald-800">âœ… BRAHMA Analysis Complete</p>
+<span id="ur-records" class="text-[10px] bg-emerald-200 text-emerald-800 px-2 py-0.5 rounded-full font-bold"></span>
+</div>
+<p id="ur-summary" class="text-xs text-slate-600 mb-3"></p>
+<div class="grid grid-cols-3 gap-2 mb-3">
+<div class="bg-white rounded-lg p-2.5 text-center border border-emerald-100"><p class="text-[9px] text-slate-400 uppercase font-bold">Delay Rate</p><p id="ur-delay-rate" class="text-base font-black text-emerald-600">â€”</p></div>
+<div class="bg-white rounded-lg p-2.5 text-center border border-emerald-100"><p class="text-[9px] text-slate-400 uppercase font-bold">Data Quality</p><p id="ur-quality" class="text-base font-black text-blue-600">â€”</p></div>
+<div class="bg-white rounded-lg p-2.5 text-center border border-emerald-100"><p class="text-[9px] text-slate-400 uppercase font-bold">Calibration</p><p id="ur-calibration" class="text-base font-black text-purple-600">â€”</p></div>
+</div>
+<div id="ur-insights" class="space-y-1.5"></div>
+</div>
+<div id="ur-routes-container" class="hidden"><p class="text-[10px] font-bold uppercase text-slate-400 mb-1.5">Top Risk Routes</p><div id="ur-routes" class="space-y-1.5"></div></div>
+<div id="ur-seasonal-container" class="hidden"><p class="text-[10px] font-bold uppercase text-slate-400 mb-1.5">Seasonal Patterns</p><div id="ur-seasonal" class="space-y-1.5"></div></div>
+</div>
+</div>
+
+<!-- Main Two-Column Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+<!-- LEFT COLUMN: New Risk Assessment Panel -->
+<div class="lg:col-span-5 space-y-5">
+<div class="bg-surface-container-lowest rounded-xl shadow-sm border-t-4 border-primary overflow-hidden">
+<div class="p-5 border-b border-surface-container">
+<h2 class="text-lg font-bold tracking-tight text-on-surface">New Risk Assessment</h2>
+<p class="text-xs text-on-surface-variant">Configure parameters for predictive journey intelligence.</p>
+</div>
+<div class="p-5 space-y-4">
+<div class="grid grid-cols-2 gap-3">
+<div class="col-span-2">
+<label class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Vessel ID / Shipment Ref</label>
+<input id="vessel_id" class="w-full bg-surface-container border-none rounded-lg focus:ring-2 focus:ring-primary/20 transition-all px-3.5 py-2 text-sm" placeholder="e.g. MV-CHENNAI-STAR" type="text" value="MV-CHENNAI-STAR"/>
+</div>
+<div>
+<label id="origin-label" class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Origin Port</label>
+<div class="relative">
+<span id="origin-icon" class="material-symbols-outlined absolute left-3 top-2 text-primary text-base">sailing</span>
+<input id="origin" list="city-list" autocomplete="off" class="w-full bg-surface-container border-none rounded-lg focus:ring-2 focus:ring-primary/20 transition-all pl-9 pr-3 py-2 text-sm" placeholder="e.g. Khor Fakkan" type="text" value="Khor Fakkan"/>
+</div>
+</div>
+<div>
+<label id="dest-label" class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Destination Port</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2 text-tertiary text-base">location_on</span>
+<input id="destination" list="city-list" autocomplete="off" class="w-full bg-surface-container border-none rounded-lg focus:ring-2 focus:ring-primary/20 transition-all pl-9 pr-3 py-2 text-sm" placeholder="e.g. Rotterdam" type="text" value="Rotterdam"/>
+</div>
+</div>
+<!-- City suggestions datalist -->
+<datalist id="city-list"></datalist>
+</div>
+
+<!-- Transport Mode Toggle -->
+<div>
+<label class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1.5">Transport Mode</label>
+<div class="grid grid-cols-3 gap-1.5 bg-surface-container p-1 rounded-xl">
+<button data-mode="sea" class="mode-btn flex items-center justify-center gap-1.5 py-2 rounded-lg bg-primary text-white shadow-sm transition-all text-xs font-semibold">
+<span class="material-symbols-outlined text-sm">sailing</span> Sea
+</button>
+<button data-mode="road" class="mode-btn flex items-center justify-center gap-1.5 py-2 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-all text-xs font-semibold">
+<span class="material-symbols-outlined text-sm">local_shipping</span> Road
+</button>
+<button data-mode="air" class="mode-btn flex items-center justify-center gap-1.5 py-2 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-all text-xs font-semibold">
+<span class="material-symbols-outlined text-sm">flight</span> Air
+</button>
+</div>
+</div>
+
+<!-- Mismatch warning banner (hidden by default) -->
+<div id="mismatch-banner" class="mismatch-banner collapsed">
+<div class="bg-red-50 border border-red-200 rounded-xl p-3 flex items-start gap-2">
+<span class="material-symbols-outlined text-red-500 text-lg mt-0.5">gpp_maybe</span>
+<div>
+<p id="mismatch-title" class="text-xs font-bold text-red-800">Transport Mode Mismatch</p>
+<p id="mismatch-detail" class="text-[10px] text-red-600 mt-0.5">Vessel ID prefix doesn't match the selected transport mode.</p>
+</div>
+<button onclick="dismissMismatch()" class="ml-auto text-red-400 hover:text-red-600"><span class="material-symbols-outlined text-sm">close</span></button>
+</div>
+</div>
+
+<div class="grid grid-cols-2 gap-3">
+<div>
+<label class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Departure Date</label>
+<input id="departure_date" class="w-full bg-surface-container border-none rounded-lg focus:ring-2 focus:ring-primary/20 transition-all px-3.5 py-2 text-sm" type="date" value="2026-04-20"/>
+</div>
+<div>
+<label class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Quantity</label>
+<input id="quantity" class="w-full bg-surface-container border-none rounded-lg focus:ring-2 focus:ring-primary/20 transition-all px-3.5 py-2 text-sm" placeholder="8400" type="number" value="8400"/>
+</div>
+</div>
+
+<!-- Hidden fields -->
+<input type="hidden" id="days_real" value="5"/>
+<input type="hidden" id="days_scheduled" value="3"/>
+<input type="hidden" id="benefit_per_order" value="50"/>
+<input type="hidden" id="sales_per_customer" value="200"/>
+<input type="hidden" id="month" value="4"/>
+<input type="hidden" id="shipping_mode_encoded" value="0"/>
+<input type="hidden" id="hs_code" value="8471"/>
+
+<!-- Quick Scenarios -->
+<div>
+<label class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1.5">Quick Scenarios</label>
+<div class="grid grid-cols-3 gap-1.5">
+<button id="sc-hormuz" onclick="loadScenario('hormuz')" class="scenario-btn p-2.5 text-left border border-outline-variant/20 rounded-xl hover:border-primary/40 hover:bg-primary/5 transition-all">
+<span class="block text-[11px] font-bold text-on-surface leading-tight">ðŸ”´ Hormuz</span>
+<span class="text-[9px] text-on-surface-variant">Sea Â· Crisis</span>
+</button>
+<button id="sc-chennai" onclick="loadScenario('chennai')" class="scenario-btn p-2.5 text-left border border-outline-variant/20 rounded-xl hover:border-primary/40 hover:bg-primary/5 transition-all">
+<span class="block text-[11px] font-bold text-on-surface leading-tight">ðŸŸ¡ Chennaiâ†’SG</span>
+<span class="text-[9px] text-on-surface-variant">Sea Â· Monsoon</span>
+</button>
+<button id="sc-mumbai" onclick="loadScenario('mumbai')" class="scenario-btn p-2.5 text-left border border-outline-variant/20 rounded-xl hover:border-primary/40 hover:bg-primary/5 transition-all">
+<span class="block text-[11px] font-bold text-on-surface leading-tight">ðŸŸ¢ Mumbaiâ†’DXB</span>
+<span class="text-[9px] text-on-surface-variant">Sea Â· Arabian</span>
+</button>
+<button id="sc-shanghai" onclick="loadScenario('shanghai')" class="scenario-btn p-2.5 text-left border border-outline-variant/20 rounded-xl hover:border-primary/40 hover:bg-primary/5 transition-all">
+<span class="block text-[11px] font-bold text-on-surface leading-tight">ðŸŸ  Shanghaiâ†’LA</span>
+<span class="text-[9px] text-on-surface-variant">Sea Â· Peak</span>
+</button>
+<button id="sc-delhi_road" onclick="loadScenario('delhi_road')" class="scenario-btn p-2.5 text-left border border-outline-variant/20 rounded-xl hover:border-purple-400/40 hover:bg-purple-50 transition-all">
+<span class="block text-[11px] font-bold text-on-surface leading-tight">ðŸšš Delhiâ†’Mum</span>
+<span class="text-[9px] text-on-surface-variant">Road Â· Monsoon</span>
+</button>
+<button id="sc-delhi_air" onclick="loadScenario('delhi_air')" class="scenario-btn p-2.5 text-left border border-outline-variant/20 rounded-xl hover:border-cyan-400/40 hover:bg-cyan-50 transition-all">
+<span class="block text-[11px] font-bold text-on-surface leading-tight">âœˆï¸ Delhiâ†’DXB</span>
+<span class="text-[9px] text-on-surface-variant">Air Â· Winter Fog</span>
+</button>
+</div>
+</div>
+
+<button id="assess-btn" onclick="assessRisk()" class="w-full bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3.5 rounded-xl shadow-lg hover:shadow-primary/20 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2.5 mt-4">
+<span>ASSESS RISK</span>
+<span class="material-symbols-outlined text-lg">bolt</span>
+</button>
+</div>
+</div>
+</div>
+
+<!-- RIGHT COLUMN: Results Panel -->
+<div class="lg:col-span-7">
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden min-h-[580px] flex flex-col relative">
+
+<!-- Empty state -->
+<div id="empty-panel" class="panel-fade visible-panel flex flex-col items-center justify-center py-20 text-center flex-grow">
+<span class="material-symbols-outlined text-5xl text-slate-200 mb-3">sailing</span>
+<p class="text-slate-500 font-semibold text-sm">Enter shipment details and click Assess Risk</p>
+<p class="text-slate-400 text-xs mt-1.5">Supports ðŸš¢ Sea Â· ðŸšš Road Â· âœˆï¸ Air transport modes</p>
+</div>
+
+<!-- Loading state â€” Live Computation Feed -->
+<div id="loading-panel" class="panel-fade hidden-panel flex-grow">
+<div class="bg-white rounded-xl border border-slate-200 p-6 m-4">
+  <div class="flex items-center gap-3 mb-5">
+    <div class="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+    <p class="text-sm font-bold text-slate-700">SANJAYA Computing Risk Assessment...</p>
+  </div>
+  <!-- Live agent feed -->
+  <div id="live-feed" class="space-y-2 mb-5"></div>
+  <!-- Progress bar -->
+  <div class="w-full bg-slate-100 rounded-full h-1.5">
+    <div id="progress-bar" class="bg-blue-500 h-1.5 rounded-full transition-all duration-500" style="width:0%"></div>
+  </div>
+  <p id="progress-label" class="text-[10px] text-slate-400 mt-2 text-center">Initializing agents...</p>
+</div>
+</div>
+
+<!-- BLOCKED panel (validation errors from KAVACH) -->
+<div id="blocked-panel" class="panel-fade hidden-panel flex-grow">
+<div class="p-6">
+<div class="bg-red-50 border-2 border-red-200 rounded-xl p-6 text-center">
+<span class="material-symbols-outlined text-red-500 text-5xl mb-3">gpp_bad</span>
+<h3 class="text-lg font-black text-red-800 mb-1">ASSESSMENT BLOCKED</h3>
+<p class="text-xs text-red-600 mb-1">KAVACH Validation Agent Â· Input Guard</p>
+<p id="blocked-engine" class="text-[9px] text-red-400 mb-4"></p>
+<div id="blocked-errors" class="text-left space-y-2 mb-4"></div>
+<div id="blocked-suggestions" class="text-left space-y-1 mb-4"></div>
+<div id="blocked-warnings" class="text-left space-y-1 mb-4"></div>
+<button onclick="showPanel('empty-panel')" class="bg-red-600 text-white px-6 py-2 rounded-lg text-xs font-bold hover:bg-red-700 transition-colors">Fix & Try Again</button>
+</div>
+</div>
+</div>
+
+<!-- Result panel -->
+<div id="result-panel" class="panel-fade hidden-panel">
+<div id="res-header"></div>
+<div id="res-agents" class="p-6 grid grid-cols-2 md:grid-cols-3 gap-3 bg-slate-50/50"></div>
+<!-- Per-Agent Evidence Cards -->
+<div id="evidence-cards" class="px-6 pb-5" style="display:none">
+<div class="flex items-center gap-2 mb-3">
+<div class="w-6 h-6 bg-gradient-to-br from-purple-600 to-indigo-700 rounded flex items-center justify-center"><span class="text-white font-black text-[9px]">B</span></div>
+<h4 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Per-Agent Intelligence &amp; Evidence</h4>
+</div>
+<div id="evidence-grid" class="space-y-3"></div>
+</div>
+<!-- Agent Evidence Section -->
+<div id="agent-evidence-section" style="display:none" class="border-t border-slate-100 px-8 py-6">
+<div class="flex items-center gap-2 mb-5">
+<span class="material-symbols-outlined text-blue-600 text-lg">hub</span>
+<h4 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Agent Evidence â€” Why Each Score Was Given</h4>
+</div>
+<div id="agent-evidence-grid" class="space-y-4"></div>
+</div>
+<div id="res-overrides"></div>
+<div class="px-6 pb-1.5 pt-2">
+<h4 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-3">Mitigation &amp; Rerouting Alternatives</h4>
+</div>
+<div id="res-rerouting" class="px-6 pb-6"></div>
+
+<!-- Computation Steps Panel -->
+<div id="computation-panel" style="display:none" class="border-t border-slate-100 px-6 py-5">
+<div class="flex items-center gap-2 mb-3">
+<div class="w-6 h-6 bg-slate-800 rounded flex items-center justify-center"><span class="material-symbols-outlined text-green-400 text-sm">calculate</span></div>
+<h4 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Step-by-Step Computation</h4>
+</div>
+<div id="computation-steps" class="space-y-2.5 mb-4"></div>
+<div class="bg-slate-900 rounded-xl p-4 font-mono text-xs">
+<p class="text-slate-400 text-[9px] uppercase mb-2">â–¶ FINAL COMPOSITE FORMULA (Non-Linear)</p>
+<div id="formula-display" class="space-y-1"></div>
+</div>
+</div>
+
+<!-- BRAHMA Deep Analysis Panel -->
+<div id="bedrock-panel" style="display:none" class="border-t border-slate-100 px-6 py-5">
+<div class="flex items-center gap-2 mb-4">
+<div class="w-7 h-7 bg-gradient-to-br from-purple-600 to-indigo-700 rounded-lg flex items-center justify-center"><span class="text-white font-black text-xs">B</span></div>
+<div><h4 class="text-xs font-black text-slate-800">BRAHMA Deep Analysis</h4><p class="text-[9px] text-slate-400">AWS Bedrock Â· Claude Intelligence</p></div>
+</div>
+<!-- Executive Summary -->
+<div class="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-100 rounded-xl p-4 mb-4">
+<p id="brahma-summary" class="text-xs text-slate-700 leading-relaxed"></p>
+<div class="flex gap-3 mt-3">
+<div class="text-center"><p class="text-[9px] text-slate-400 uppercase">Confidence</p><p id="brahma-confidence" class="text-sm font-black text-purple-600"></p><p id="brahma-confidence-label" class="text-[9px] text-purple-400"></p></div>
+<div class="text-center"><p class="text-[9px] text-slate-400 uppercase">Dominant</p><p id="brahma-dominant" class="text-[10px] font-bold text-slate-600"></p></div>
+<div class="text-center"><p class="text-[9px] text-slate-400 uppercase">Financial</p><p id="brahma-financial" class="text-[10px] font-bold text-slate-600"></p></div>
+</div>
+</div>
+<!-- Math Terminal -->
+<div class="bg-slate-900 rounded-xl p-4 mb-4 font-mono">
+<p class="text-slate-400 text-[9px] uppercase mb-2">â–¶ MATHEMATICAL VALIDATION</p>
+<div id="brahma-math" class="text-xs"></div>
+</div>
+<!-- Agent Insights -->
+<div id="agent-insights-panel" class="mb-4">
+<h5 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">Per-Agent Intelligence</h5>
+<div id="agent-insights-grid" class="space-y-2"></div>
+</div>
+<!-- Company Impact -->
+<div id="company-impact-panel" class="mb-4 hidden">
+<h5 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">Company Data Impact</h5>
+<div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3">
+<div class="flex items-center gap-2 mb-1"><span class="material-symbols-outlined text-emerald-600 text-sm">history</span><p class="text-xs font-bold text-emerald-800" id="company-impact-title">Historical Calibration Applied</p></div>
+<p id="company-impact-text" class="text-[10px] text-slate-600 mb-1"></p>
+<div class="flex items-center gap-1"><span class="text-[9px] text-slate-400">Adjustment:</span><span id="company-impact-adj" class="text-xs font-bold text-emerald-600"></span></div>
+</div>
+</div>
+<!-- Scenarios -->
+<h5 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">Alternative Scenarios</h5>
+<div id="brahma-scenarios" class="grid grid-cols-1 md:grid-cols-3 gap-2 mb-4"></div>
+<!-- Actions -->
+<h5 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">Recommended Actions</h5>
+<div id="brahma-actions" class="space-y-2 mb-4"></div>
+<!-- Verdict -->
+<div class="bg-slate-900 rounded-xl p-4 text-center">
+<p class="text-[9px] text-slate-400 uppercase mb-1">BRAHMA VERDICT</p>
+<p id="brahma-verdict" class="text-sm font-black text-yellow-300"></p>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+<!-- History Table -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+<div class="p-5 border-b border-surface-container flex justify-between items-center">
+<div>
+<h2 class="text-base font-bold tracking-tight text-on-surface">Recent Intelligence Logs</h2>
+<p class="text-[10px] text-on-surface-variant">Real-time history of shipment audits and risk triggers.</p>
+</div>
+<button onclick="loadHistory()" class="bg-surface-container px-3 py-1.5 rounded-lg text-[10px] font-bold hover:bg-surface-container-high transition-colors flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm">refresh</span> Refresh
+</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-surface-container">
+<th class="px-5 py-3 text-[9px] font-bold uppercase tracking-widest text-on-surface-variant">Time</th>
+<th class="px-5 py-3 text-[9px] font-bold uppercase tracking-widest text-on-surface-variant">Vessel ID</th>
+<th class="px-5 py-3 text-[9px] font-bold uppercase tracking-widest text-on-surface-variant">Route</th>
+<th class="px-5 py-3 text-[9px] font-bold uppercase tracking-widest text-on-surface-variant">Mode</th>
+<th class="px-5 py-3 text-[9px] font-bold uppercase tracking-widest text-on-surface-variant text-center">Score</th>
+<th class="px-5 py-3 text-[9px] font-bold uppercase tracking-widest text-on-surface-variant">Level</th>
+<th class="px-5 py-3 text-[9px] font-bold uppercase tracking-widest text-on-surface-variant">Recommendation</th>
+</tr>
+</thead>
+<tbody id="history-tbody" class="divide-y divide-surface-container">
+<tr><td colspan="7" class="px-5 py-6 text-center text-on-surface-variant text-xs">Loading history...</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+
+<!-- Chat FAB -->
+<button onclick="toggleChat()" class="fixed bottom-6 right-6 w-12 h-12 bg-gradient-to-br from-purple-600 to-indigo-700 rounded-full shadow-xl flex items-center justify-center hover:scale-110 transition-transform z-50">
+<span class="material-symbols-outlined text-white text-xl">smart_toy</span>
+</button>
+<div id="chat-panel" style="display:none" class="fixed bottom-20 right-6 w-80 bg-white rounded-xl shadow-2xl border border-outline-variant/20 z-50 overflow-hidden">
+<div class="bg-gradient-to-r from-purple-600 to-indigo-700 p-3 flex justify-between items-center">
+<div class="flex items-center gap-2"><span class="text-white font-black text-sm">BRAHMA</span><span class="text-purple-200 text-[9px]">AI Assistant</span></div>
+<button onclick="toggleChat()" class="text-purple-200 hover:text-white"><span class="material-symbols-outlined text-sm">close</span></button>
+</div>
+<div id="chat-messages" class="p-3 h-60 overflow-y-auto space-y-2 text-xs"><div class="bg-purple-50 rounded-xl px-3 py-2 text-slate-600">Hi! I'm BRAHMA. Ask me about routes, risks, or your uploaded data.</div></div>
+<div class="p-2 border-t flex gap-2">
+<input id="chat-input" class="flex-1 bg-slate-50 border-none rounded-lg px-3 py-2 text-xs" placeholder="Ask BRAHMA..." onkeydown="if(event.key==='Enter')sendChat()"/>
+<button onclick="sendChat()" class="bg-purple-600 text-white px-3 py-2 rounded-lg"><span class="material-symbols-outlined text-sm">send</span></button>
+</div>
+</div>
+
+</div><!-- end lg:ml-[72px] wrapper -->
+
+<script>
+// ── CONFIG ──────────────────────────────────────────
+const API = "http://16.112.128.251:8000";
+
+// â”€â”€ STATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+let selectedMode = "sea";
+let currentResult = null;
+let activeScenario = null;
+
+// â”€â”€ VESSEL ID PREFIX â†’ MODE MAPPING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Prefixes that strongly imply a specific transport mode
+const PREFIX_MODE_MAP = {
+  'MV-':    'sea',   // Motor Vessel
+  'MSC-':   'sea',   // Mediterranean Shipping Co
+  'EVER-':  'sea',   // Evergreen
+  'MAERSK-':'sea',
+  'CMA-':   'sea',
+  'COSCO-': 'sea',
+  'TRUCK-': 'road',  // Truck
+  'TRK-':   'road',
+  'DL-':    'road',  // Delhi plates
+  'MH-':    'road',  // Maharashtra plates
+  'KA-':    'road',  // Karnataka plates
+  'AI-':    'air',   // Air India Cargo
+  'FDX-':   'air',   // FedEx
+  'UPS-':   'air',
+  'DHL-':   'air',
+  'CARGO-': 'air'
+};
+
+function detectModeFromVesselId(vid) {
+  const upper = vid.toUpperCase();
+  for (const [prefix, mode] of Object.entries(PREFIX_MODE_MAP)) {
+    if (upper.startsWith(prefix)) return mode;
+  }
+  return null; // unknown â€” no mismatch
+}
+
+function getModeLabel(mode) {
+  return {sea:'Sea Freight ðŸš¢', road:'Road Transport ðŸšš', air:'Air Freight âœˆï¸'}[mode] || mode;
+}
+
+// â”€â”€ TRANSPORT MODE VALIDATION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function checkMismatch() {
+  const vid = getValue('vessel_id','').trim();
+  if (!vid) { hideMismatch(); return true; }
+
+  const detected = detectModeFromVesselId(vid);
+  if (!detected || detected === selectedMode) {
+    hideMismatch();
+    return true; // no mismatch
+  }
+
+  // Show mismatch warning
+  const banner = document.getElementById('mismatch-banner');
+  const title = document.getElementById('mismatch-title');
+  const detail = document.getElementById('mismatch-detail');
+  title.textContent = 'Transport Mode Mismatch Detected';
+  detail.textContent = 'Vessel "' + vid + '" appears to be ' + getModeLabel(detected) +
+    ' but you selected ' + getModeLabel(selectedMode) +
+    '. This may produce inaccurate risk assessments.';
+  banner.classList.remove('collapsed');
+  banner.classList.add('expanded');
+  return false; // mismatch exists
+}
+
+function hideMismatch() {
+  const banner = document.getElementById('mismatch-banner');
+  banner.classList.remove('expanded');
+  banner.classList.add('collapsed');
+}
+
+function dismissMismatch() { hideMismatch(); }
+
+// â”€â”€ CITY DATABASES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+const INDIAN_CITIES = [
+  "Delhi","New Delhi","Mumbai","Chennai","Kolkata","Bangalore","Bengaluru",
+  "Hyderabad","Pune","Ahmedabad","Surat","Jaipur","Lucknow","Kanpur",
+  "Nagpur","Indore","Thane","Bhopal","Visakhapatnam","Vizag","Patna",
+  "Vadodara","Ghaziabad","Ludhiana","Agra","Nashik","Faridabad","Meerut",
+  "Rajkot","Varanasi","Aurangabad","Amritsar","Navi Mumbai","Ranchi",
+  "Coimbatore","Jabalpur","Gwalior","Vijayawada","Jodhpur","Madurai",
+  "Raipur","Kota","Chandigarh","Guwahati","Solapur","Hubli","Mysore",
+  "Tiruchirappalli","Bareilly","Moradabad","Gurgaon","Gurugram","Noida",
+  "Mangalore","Udaipur","Jammu","Dehradun","Shimla","Thiruvananthapuram",
+  "Kochi","Cochin","Kozhikode","Bhubaneswar","Cuttack","Manesar","Bhiwandi"
+];
+const GLOBAL_PORTS = [
+  "Shanghai","Singapore","Rotterdam","Antwerp","Hamburg","Los Angeles",
+  "Long Beach","Dubai","Jebel Ali","Hong Kong","Busan","Ningbo","Shenzhen",
+  "Tokyo","Yokohama","Colombo","Felixstowe","Valencia","Barcelona",
+  "Istanbul","Karachi","London","New York","Bangkok","Ho Chi Minh",
+  "Jakarta","Manila","Kuala Lumpur","Melbourne","Sydney","Vancouver",
+  "Khor Fakkan","Bandar Abbas","Fujairah","Muscat","Abu Dhabi","Doha",
+  "Jeddah","Mombasa","Durban","Mumbai","Chennai","Kolkata","Kochi",
+  "Vizag","Mundra","Nhava Sheva","Pipavav","Ennore","Tuticorin"
+];
+const AIRPORTS = [
+  "Delhi (DEL)","Mumbai (BOM)","Bangalore (BLR)","Chennai (MAA)","Hyderabad (HYD)",
+  "Kolkata (CCU)","Pune (PNQ)","Ahmedabad (AMD)","Kochi (COK)","Goa (GOI)",
+  "Dubai (DXB)","Abu Dhabi (AUH)","Doha (DOH)","Singapore (SIN)","Hong Kong (HKG)",
+  "London (LHR)","Frankfurt (FRA)","Amsterdam (AMS)","Paris (CDG)","New York (JFK)",
+  "Los Angeles (LAX)","Chicago (ORD)","Tokyo (NRT)","Seoul (ICN)","Shanghai (PVG)",
+  "Bangkok (BKK)","Kuala Lumpur (KUL)","Sydney (SYD)","Toronto (YYZ)"
+];
+
+function updateCityList(mode) {
+  var dl = document.getElementById('city-list');
+  if (!dl) return;
+  var cities = mode === 'road' ? INDIAN_CITIES : mode === 'air' ? AIRPORTS : GLOBAL_PORTS;
+  dl.innerHTML = cities.map(function(c) { return '<option value="'+c+'">'; }).join('');
+}
+
+function updateLabelsForMode(mode) {
+  var ol = document.getElementById('origin-label');
+  var dl = document.getElementById('dest-label');
+  var oi = document.getElementById('origin');
+  var di = document.getElementById('destination');
+  if (mode === 'road') {
+    if (ol) ol.textContent = 'Origin City (India)';
+    if (dl) dl.textContent = 'Destination City (India)';
+    if (oi) oi.placeholder = 'e.g. Delhi, Mumbai, Pune...';
+    if (di) di.placeholder = 'e.g. Mumbai, Chennai, Kolkata...';
+  } else if (mode === 'air') {
+    if (ol) ol.textContent = 'Origin Airport';
+    if (dl) dl.textContent = 'Destination Airport';
+    if (oi) oi.placeholder = 'e.g. Delhi (DEL)';
+    if (di) di.placeholder = 'e.g. Dubai (DXB)';
+  } else {
+    if (ol) ol.textContent = 'Origin Port';
+    if (dl) dl.textContent = 'Destination Port';
+    if (oi) oi.placeholder = 'e.g. Khor Fakkan, Mumbai';
+    if (di) di.placeholder = 'e.g. Rotterdam, Singapore';
+  }
+}
+
+// â”€â”€ TRANSPORT MODE TOGGLE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    selectedMode = btn.dataset.mode;
+    document.querySelectorAll('.mode-btn').forEach(b => {
+      b.classList.remove('bg-primary','bg-purple-600','bg-cyan-600','text-white','shadow-sm');
+      b.classList.add('text-on-surface-variant');
+    });
+    const colors = {sea:'bg-primary',road:'bg-purple-600',air:'bg-cyan-600'};
+    btn.classList.remove('text-on-surface-variant');
+    btn.classList.add(colors[selectedMode], 'text-white', 'shadow-sm');
+    // Update origin icon
+    const iconMap = {sea:'sailing', road:'local_shipping', air:'flight'};
+    document.getElementById('origin-icon').textContent = iconMap[selectedMode] || 'sailing';
+    // Update labels and city list
+    updateLabelsForMode(selectedMode);
+    updateCityList(selectedMode);
+    // Re-check mismatch
+    checkMismatch();
+  });
+});
+// Init datalist for default mode
+updateCityList('sea');
+updateLabelsForMode('sea');
+
+// â”€â”€ QUICK SCENARIOS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+const SCENARIOS = {
+  hormuz: {
+    vessel_id:'MV-CHENNAI-STAR', origin:'Khor Fakkan',
+    destination:'Rotterdam', days_real:8, days_scheduled:3,
+    benefit_per_order:-50, sales_per_customer:500, quantity:8400,
+    month:4, shipping_mode_encoded:0, hs_code:'8471',
+    transport_mode:'sea', departure_date:'2026-04-20'
+  },
+  chennai: {
+    vessel_id:'MV-INDIA-EXPRESS', origin:'Chennai',
+    destination:'Singapore', days_real:4, days_scheduled:3,
+    benefit_per_order:120, sales_per_customer:800, quantity:500,
+    month:8, shipping_mode_encoded:1, hs_code:'6204',
+    transport_mode:'sea', departure_date:'2026-08-10'
+  },
+  mumbai: {
+    vessel_id:'MV-GUJARAT-STAR', origin:'Mumbai',
+    destination:'Dubai', days_real:3, days_scheduled:3,
+    benefit_per_order:200, sales_per_customer:1200, quantity:1200,
+    month:6, shipping_mode_encoded:2, hs_code:'7308',
+    transport_mode:'sea', departure_date:'2026-06-15'
+  },
+  shanghai: {
+    vessel_id:'MV-PACIFIC-WIND', origin:'Shanghai',
+    destination:'Los Angeles', days_real:6, days_scheduled:5,
+    benefit_per_order:80, sales_per_customer:600, quantity:3000,
+    month:12, shipping_mode_encoded:0, hs_code:'8542',
+    transport_mode:'sea', departure_date:'2026-12-01'
+  },
+  delhi_road: {
+    vessel_id:'TRUCK-DL-001', origin:'Delhi',
+    destination:'Mumbai', days_real:4, days_scheduled:2,
+    benefit_per_order:80, sales_per_customer:400, quantity:200,
+    month:7, shipping_mode_encoded:0, hs_code:'4011',
+    transport_mode:'road', departure_date:'2026-07-15'
+  },
+  delhi_air: {
+    vessel_id:'AI-CARGO-001', origin:'Delhi',
+    destination:'Dubai', days_real:2, days_scheduled:1,
+    benefit_per_order:500, sales_per_customer:2000, quantity:50,
+    month:1, shipping_mode_encoded:3, hs_code:'8542',
+    transport_mode:'air', departure_date:'2026-01-10'
+  }
+};
+
+function loadScenario(name) {
+  const s = SCENARIOS[name];
+  if (!s) return;
+  activeScenario = name;
+
+  // Highlight active scenario button
+  document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('scenario-active'));
+  const btn = document.getElementById('sc-' + name);
+  if (btn) btn.classList.add('scenario-active');
+
+  setValue('vessel_id', s.vessel_id);
+  setValue('origin', s.origin);
+  setValue('destination', s.destination);
+  setValue('days_real', s.days_real);
+  setValue('days_scheduled', s.days_scheduled);
+  setValue('benefit_per_order', s.benefit_per_order);
+  setValue('sales_per_customer', s.sales_per_customer);
+  setValue('quantity', s.quantity);
+  setValue('month', s.month);
+  setValue('shipping_mode_encoded', s.shipping_mode_encoded);
+  setValue('hs_code', s.hs_code);
+  setValue('departure_date', s.departure_date);
+
+  // FORCE the correct transport mode from the scenario â€” prevents mismatches
+  selectedMode = s.transport_mode;
+  document.querySelectorAll('.mode-btn').forEach(b => {
+    b.classList.remove('bg-primary','bg-purple-600','bg-cyan-600','text-white','shadow-sm');
+    b.classList.add('text-on-surface-variant');
+    if (b.dataset.mode === selectedMode) {
+      const colors = {sea:'bg-primary',road:'bg-purple-600',air:'bg-cyan-600'};
+      b.classList.remove('text-on-surface-variant');
+      b.classList.add(colors[selectedMode], 'text-white', 'shadow-sm');
+    }
+  });
+  const iconMap = {sea:'sailing', road:'local_shipping', air:'flight'};
+  document.getElementById('origin-icon').textContent = iconMap[selectedMode] || 'sailing';
+  updateLabelsForMode(selectedMode);
+  updateCityList(selectedMode);
+  hideMismatch();
+}
+
+function setValue(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.value = val;
+}
+function getValue(id, def) {
+  const el = document.getElementById(id);
+  return el ? (el.value || def) : def;
+}
+
+// â”€â”€ PANEL TRANSITIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function showPanel(id) {
+  ['empty-panel','loading-panel','result-panel','blocked-panel'].forEach(p => {
+    const el = document.getElementById(p);
+    if (!el) return;
+    if (p === id) {
+      el.classList.remove('hidden-panel');
+      el.classList.add('visible-panel');
+    } else {
+      el.classList.remove('visible-panel');
+      el.classList.add('hidden-panel');
+    }
+  });
+}
+
+// â”€â”€ ASSESS RISK â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+async function assessRisk() {
+  var origin = getValue('origin','').trim();
+  var dest = getValue('destination','').trim();
+  if (!origin || !dest) {
+    var form = document.querySelector('.p-5.space-y-4');
+    if (form) { form.classList.add('shake'); setTimeout(function(){form.classList.remove('shake')}, 600); }
+    return;
+  }
+  checkMismatch();
+  var btn = document.getElementById('assess-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span>ASSESSING...</span><span class="material-symbols-outlined animate-spin text-lg">sync</span>';
+  showLoadingState(true);
+  buildLiveFeed(false);
+  var steps = [
+    {id:'step-vayu',delay:200,label:'Weather fetched \u2713'},
+    {id:'step-sanchar',delay:700,label:'News scanned \u2713'},
+    {id:'step-nidhi',delay:1300,label:'ML inference done \u2713'},
+    {id:'step-darpana',delay:1900,label:'Port data loaded \u2713'},
+    {id:'step-viveka',delay:2400,label:'Customs checked \u2713'},
+    {id:'step-brahma-analyze',delay:2800,label:'Bedrock analysis complete \u2713'},
+    {id:'step-arjuna',delay:3600,label:'Score computed \u2713'}
+  ];
+  steps.forEach(function(s,idx){
+    setTimeout(function(){activateStep(s.id,'Processing...');updateProgress(((idx+1)/steps.length)*85,s.id.replace('step-','').toUpperCase()+' running...');},s.delay);
+    setTimeout(function(){completeStep(s.id,null,s.label);},s.delay+500);
+  });
+  var payload = {
+    vessel_id: getValue('vessel_id','MV-UNKNOWN'),
+    origin: origin, destination: dest,
+    days_real: Number(getValue('days_real','5')),
+    days_scheduled: Number(getValue('days_scheduled','3')),
+    benefit_per_order: Number(getValue('benefit_per_order','50')),
+    sales_per_customer: Number(getValue('sales_per_customer','200')),
+    discount_rate: 0.05, profit_ratio: 0.1,
+    quantity: Number(getValue('quantity','100')), category_id: 73,
+    shipping_mode_encoded: Number(getValue('shipping_mode_encoded','0')),
+    month: Number(getValue('month', String(new Date().getMonth()+1))),
+    hs_code: getValue('hs_code','8471'),
+    transport_mode: selectedMode,
+    departure_date: getValue('departure_date', new Date().toISOString().split('T')[0])
+  };
+  try {
+    var res = await fetch(API + '/predict/enhanced', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    if (res.status === 422) {
+      var blocked = await res.json();
+      showLoadingState(false); showPanel('blocked-panel');
+      renderBlocked(blocked); return;
+    }
+    var data = await res.json();
+    currentResult = data;
+    updateProgress(100,'Assessment complete!');
+    await new Promise(function(r){setTimeout(r,600)});
+    showLoadingState(false);
+    showPanel('result-panel');
+    if (data.breakdown) {
+      var b=data.breakdown;
+      completeStep('step-vayu',b.s_weather,(b.s_weather*100).toFixed(0)+'% weather risk');
+      completeStep('step-sanchar',b.s_geo,(b.s_geo*100).toFixed(0)+'% geo risk');
+      completeStep('step-nidhi',b.p_delay,(b.p_delay*100).toFixed(0)+'% delay prob');
+      completeStep('step-darpana',b.c_port,(b.c_port*100).toFixed(0)+'% port risk');
+      completeStep('step-viveka',b.customs_risk,(b.customs_risk*100).toFixed(0)+'% customs');
+    }
+    renderResult(data);
+    renderAgentEvidence(data);
+    if (data.bedrock_analysis) renderBedrockAnalysis(data);
+    loadStats(); loadHistory();
+  } catch(e) {
+    showLoadingState(false); showPanel('empty-panel');
+    alert('API Error: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<span>ASSESS RISK</span><span class="material-symbols-outlined text-lg">bolt</span>';
+  }
+}
+
+
+
+// â”€â”€ RENDER BLOCKED (KAVACH VALIDATION) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function renderBlocked(data) {
+  showPanel('blocked-panel');
+
+  // Engine badge
+  setText('blocked-engine', 'Engine: ' + (data.validation_engine || 'kavach-rule-engine'));
+
+  // Errors (hard blockers)
+  var errHTML = '';
+  var errors = data.errors || [];
+  for (var i = 0; i < errors.length; i++) {
+    errHTML += '<div class="bg-red-100 border border-red-200 rounded-lg p-3 flex items-start gap-2">'
+      + '<span class="material-symbols-outlined text-red-600 text-base mt-0.5">block</span>'
+      + '<p class="text-[11px] text-red-800 font-medium">' + errors[i] + '</p>'
+      + '</div>';
+  }
+  setHTML('blocked-errors', errHTML);
+
+  // Suggestions
+  var sugHTML = '';
+  var suggestions = data.suggestions || [];
+  for (var j = 0; j < suggestions.length; j++) {
+    sugHTML += '<div class="bg-blue-50 border border-blue-100 rounded-lg p-2.5 flex items-start gap-2">'
+      + '<span class="material-symbols-outlined text-blue-500 text-sm mt-0.5">lightbulb</span>'
+      + '<p class="text-[10px] text-blue-800">' + suggestions[j] + '</p>'
+      + '</div>';
+  }
+  setHTML('blocked-suggestions', sugHTML);
+
+  // Warnings
+  var warnHTML = '';
+  var warnings = data.warnings || [];
+  for (var k = 0; k < warnings.length; k++) {
+    warnHTML += '<p class="text-[10px] text-amber-700 pl-2 border-l-2 border-amber-300">' + warnings[k] + '</p>';
+  }
+  setHTML('blocked-warnings', warnHTML);
+
+  // Auto-check mismatch on the form side too
+  checkMismatch();
+}
+
+// â”€â”€ RENDER RESULT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function renderResult(data) {
+  const level = data.risk_level;
+  const score = data.risk_score;
+  const b = data.breakdown;
+
+  const colors = {
+    'CRITICAL':    {bg:'bg-red-50/40',   text:'text-red-700',   badge:'bg-red-600 text-white'},
+    'HIGH':        {bg:'bg-orange-50/40', text:'text-orange-700',badge:'bg-orange-500 text-white'},
+    'MEDIUM-HIGH': {bg:'bg-amber-50/40',  text:'text-amber-700', badge:'bg-amber-500 text-white'},
+    'MEDIUM':      {bg:'bg-yellow-50/40', text:'text-yellow-700',badge:'bg-yellow-500 text-white'},
+    'LOW-MEDIUM':  {bg:'bg-blue-50/40',   text:'text-blue-700',  badge:'bg-blue-400 text-white'},
+    'LOW':         {bg:'bg-green-50/40',  text:'text-green-700', badge:'bg-green-500 text-white'}
+  };
+  const c = colors[level] || colors['LOW'];
+  const modeIcon = {sea:'sailing', road:'local_shipping', air:'flight'};
+  const modeName = {sea:'Sea Freight', road:'Road Transport', air:'Air Freight'};
+  const tm = data.transport_mode || selectedMode;
+
+  setHTML('res-header', ''
+    + '<div class="p-6 flex flex-col md:flex-row justify-between items-start gap-4 border-b border-surface-container ' + c.bg + '">'
+    +   '<div class="space-y-1.5">'
+    +     '<div class="flex items-center gap-2 flex-wrap">'
+    +       '<span class="' + c.badge + ' text-[10px] font-black px-2 py-0.5 rounded tracking-tight uppercase">' + level + '</span>'
+    +       '<span class="text-xs font-semibold text-on-surface-variant">' + data.vessel_id + '</span>'
+    +       '<span class="text-[10px] text-slate-400">' + (data.route || '') + '</span>'
+    +     '</div>'
+    +     '<h3 class="text-4xl font-black text-slate-900 tracking-tighter score-animate">'
+    +       score + ' <span class="text-lg font-medium text-slate-400">/ 100</span>'
+    +     '</h3>'
+    +     '<p class="' + c.text + ' font-semibold flex items-center gap-1 text-xs leading-snug">'
+    +       '<span class="material-symbols-outlined text-sm">warning</span> '
+    +       data.recommendation
+    +     '</p>'
+    +   '</div>'
+    +   '<div class="flex flex-col items-end gap-2 shrink-0">'
+    +     '<div class="flex gap-1.5 flex-wrap justify-end">'
+    +       '<span class="bg-surface-container px-2.5 py-0.5 rounded-full text-[9px] font-bold flex items-center gap-1">'
+    +         '<span class="material-symbols-outlined text-xs">wb_sunny</span> '
+    +         (data.season || 'normal')
+    +       '</span>'
+    +       '<span class="bg-primary/10 text-primary px-2.5 py-0.5 rounded-full text-[9px] font-bold flex items-center gap-1">'
+    +         '<span class="material-symbols-outlined text-xs">' + (modeIcon[tm]||'sailing') + '</span> '
+    +         (modeName[tm]||'Sea')
+    +       '</span>'
+    +     '</div>'
+    +     '<div class="mt-2 text-right">'
+    +       '<p class="text-[9px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Non-Linear Risk Formula</p>'
+    +       '<code class="text-[10px] bg-surface-container px-2 py-0.5 rounded text-primary font-medium">'
+    +         'RS = (0.50\u00D7' + b.p_delay + '\u00B2) + (0.18\u00D7' + b.s_weather + ') + (0.20\u00D7' + b.s_geo + '\u00B2) + (0.12\u00D7' + b.c_port + ') = ' + score
+    +       '</code>'
+    +     '</div>'
+    +   '</div>'
+    + '</div>'
+  );
+
+  // Agent cards
+  var agents = [
+    {name:'NIDHI',   meaning:'ML Delay Model',     icon:'model_training',         score:b.p_delay,      bg:'bg-blue-100',   ic:'text-blue-700'},
+    {name:'VAYU',    meaning:'Weather + Season',    icon:'air',                    score:b.s_weather,    bg:'bg-cyan-100',   ic:'text-cyan-700'},
+    {name:'SANCHAR', meaning:'Geopolitical Risk',   icon:'settings_input_antenna', score:b.s_geo,        bg:'bg-indigo-100', ic:'text-indigo-700'},
+    {name:'DARPANA', meaning:'Port / Road / Air',   icon:'visibility',             score:b.c_port,       bg:'bg-amber-100',  ic:'text-amber-700'},
+    {name:'VIVEKA',  meaning:'Customs & Compliance',icon:'psychology',             score:b.customs_risk, bg:'bg-purple-100', ic:'text-purple-700'},
+    {name:'ARJUNA',  meaning:'Final Score',         icon:'track_changes',          score:score/100,      bg:'bg-green-100',  ic:'text-green-700'}
+  ];
+
+  var agentHTML = '';
+  for (var ai = 0; ai < agents.length; ai++) {
+    var a = agents[ai];
+    var pct = Math.round(a.score * 100);
+    var sc = pct >= 75 ? 'text-red-600' : pct >= 50 ? 'text-orange-500' : 'text-green-600';
+    agentHTML += '<div class="bg-white p-3 rounded-xl border border-outline-variant/15 shadow-sm hover:shadow-md transition-shadow">'
+      + '<div class="flex justify-between items-start mb-1.5">'
+      +   '<div class="w-7 h-7 ' + a.bg + ' rounded-lg flex items-center justify-center">'
+      +     '<span class="material-symbols-outlined ' + a.ic + ' text-base">' + a.icon + '</span>'
+      +   '</div>'
+      +   '<span class="text-xs font-bold ' + sc + '">' + a.score.toFixed(3) + '</span>'
+      + '</div>'
+      + '<p class="text-[10px] font-bold uppercase text-on-surface-variant">' + a.name + '</p>'
+      + '<p class="text-[9px] text-slate-400 leading-tight">' + a.meaning + '</p>'
+      + '</div>';
+  }
+  setHTML('res-agents', agentHTML);
+
+  // Rule overrides
+  var overrides = data.rule_overrides || [];
+  if (overrides.length > 0) {
+    var oHTML = '<div class="px-6 pb-3"><div class="bg-amber-50 border-l-4 border-amber-400 p-3 rounded-r-lg">'
+      + '<div class="flex gap-2 mb-1"><span class="material-symbols-outlined text-amber-600 text-base">warning</span>'
+      + '<p class="text-[11px] font-bold text-amber-900">Rule Override(s) Applied</p></div>';
+    for (var oi = 0; oi < overrides.length; oi++) {
+      oHTML += '<p class="text-[10px] text-amber-700 mb-0.5 ml-6">\u26A0 ' + overrides[oi] + '</p>';
+    }
+    oHTML += '</div></div>';
+    setHTML('res-overrides', oHTML);
+  } else {
+    setHTML('res-overrides', '');
+  }
+
+  // Rerouting table
+  var routes = data.rerouting_options || [];
+  var tHTML = '<div class="overflow-hidden rounded-xl border border-surface-container">'
+    + '<table class="w-full text-left border-collapse">'
+    + '<thead class="bg-surface-container-high"><tr>'
+    + '<th class="px-3 py-2.5 text-[9px] font-bold uppercase text-on-surface-variant">Route</th>'
+    + '<th class="px-3 py-2.5 text-[9px] font-bold uppercase text-on-surface-variant">Days</th>'
+    + '<th class="px-3 py-2.5 text-[9px] font-bold uppercase text-on-surface-variant">On-Time</th>'
+    + '<th class="px-3 py-2.5 text-[9px] font-bold uppercase text-on-surface-variant">Cost</th>'
+    + '<th class="px-3 py-2.5 text-[9px] font-bold uppercase text-on-surface-variant text-right">Verdict</th>'
+    + '</tr></thead><tbody class="divide-y divide-surface-container">';
+  for (var ri = 0; ri < routes.length; ri++) {
+    var r = routes[ri];
+    var vc = r.verdict.indexOf('RECOMMENDED') >= 0 ? 'bg-green-100 text-green-700'
+           : (r.verdict.indexOf('NOT') >= 0 || r.verdict.indexOf('DO NOT') >= 0) ? 'bg-red-100 text-red-700'
+           : 'bg-orange-100 text-orange-700';
+    tHTML += '<tr class="hover:bg-surface-container-low transition-colors">'
+      + '<td class="px-3 py-2.5 text-[11px] font-semibold">' + r.route + '</td>'
+      + '<td class="px-3 py-2.5 text-[11px] font-medium text-orange-600">+' + r.extra_days + '</td>'
+      + '<td class="px-3 py-2.5 text-[11px]">' + r.on_time_probability + '</td>'
+      + '<td class="px-3 py-2.5 text-[11px]">' + r.extra_cost + '</td>'
+      + '<td class="px-3 py-2.5 text-right"><span class="' + vc + ' px-1.5 py-0.5 rounded-full text-[9px] font-bold">' + r.verdict + '</span></td>'
+      + '</tr>';
+  }
+  tHTML += '</tbody></table></div>';
+  setHTML('res-rerouting', tHTML);
+}
+
+// â”€â”€ STATS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+async function loadStats() {
+  try {
+    var res = await fetch(API + '/stats');
+    var d = await res.json();
+    setText('stat-total',    d.total_assessments || 0);
+    setText('stat-critical', d.critical_count || 0);
+    setText('stat-high',     d.high_count || d.medium_count || 0);
+    setText('stat-avg',      d.avg_risk_score ? Number(d.avg_risk_score).toFixed(1) : '0');
+    var el = document.getElementById('api-status');
+    if (el) { el.textContent = '\u25CF Connected'; el.className = 'text-[9px] font-bold text-green-700 uppercase'; }
+  } catch(e) {
+    var el = document.getElementById('api-status');
+    if (el) { el.textContent = '\u2717 Offline'; el.className = 'text-[9px] font-bold text-red-600 uppercase'; }
+  }
+}
+
+// â”€â”€ HISTORY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+async function loadHistory() {
+  try {
+    var res = await fetch(API + '/history');
+    var d = await res.json();
+    var tbody = document.getElementById('history-tbody');
+    if (!tbody) return;
+    if (!d.assessments || d.assessments.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" class="px-5 py-6 text-center text-on-surface-variant text-xs">No assessments yet. Run your first risk check!</td></tr>';
+      return;
+    }
+    var mI = {sea:'sailing', road:'local_shipping', air:'flight'};
+    var mC = {sea:'text-primary', road:'text-purple-600', air:'text-cyan-600'};
+    var lB = {'CRITICAL':'bg-red-600 text-white','HIGH':'bg-orange-500 text-white','MEDIUM-HIGH':'bg-amber-500 text-white','MEDIUM':'bg-yellow-400 text-slate-900','LOW-MEDIUM':'bg-blue-400 text-white','LOW':'bg-green-500 text-white'};
+    var html = '';
+    for (var i = 0; i < d.assessments.length; i++) {
+      var a = d.assessments[i];
+      var t = new Date(a.timestamp).toLocaleTimeString();
+      var mode = a.transport_mode || 'sea';
+      var badge = lB[a.risk_level] || 'bg-green-500 text-white';
+      var sCol = a.risk_score >= 75 ? 'text-red-600' : a.risk_score >= 50 ? 'text-orange-500' : 'text-green-600';
+      html += '<tr class="hover:bg-slate-50 transition-colors">'
+        + '<td class="px-5 py-3 text-[11px] text-on-surface-variant font-medium">' + t + '</td>'
+        + '<td class="px-5 py-3 text-[11px] font-bold">' + a.vessel_id + '</td>'
+        + '<td class="px-5 py-3 text-[11px]">' + a.origin + ' \u2192 ' + a.destination + '</td>'
+        + '<td class="px-5 py-3"><span class="material-symbols-outlined ' + (mC[mode]||'text-primary') + ' text-base">' + (mI[mode]||'sailing') + '</span></td>'
+        + '<td class="px-5 py-3 text-center"><span class="text-xs font-bold ' + sCol + '">' + a.risk_score + '</span></td>'
+        + '<td class="px-5 py-3"><span class="' + badge + ' px-1.5 py-0.5 rounded text-[9px] font-bold uppercase">' + a.risk_level + '</span></td>'
+        + '<td class="px-5 py-3 text-[11px]">' + (a.recommendation ? a.recommendation.substring(0,55)+'...' : '\u2014') + '</td>'
+        + '</tr>';
+    }
+    tbody.innerHTML = html;
+  } catch(e) { console.log('History error:', e); }
+}
+
+// â”€â”€ HELPERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function setHTML(id, html) { var el = document.getElementById(id); if (el) el.innerHTML = html; }
+function setText(id, val) { var el = document.getElementById(id); if (el) el.textContent = val; }
+
+// â”€â”€ HEALTH CHECK â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+async function checkHealth() {
+  try {
+    var res = await fetch(API + '/health');
+    var d = await res.json();
+    var el = document.getElementById('api-status');
+    if (el) el.textContent = d.status === 'ok' ? '\u25CF Connected' : '\u2717 Error';
+  } catch(e) {
+    var el = document.getElementById('api-status');
+    if (el) { el.textContent = '\u2717 Offline'; el.className = 'text-[9px] font-bold text-red-600 uppercase'; }
+  }
+}
+
+// Listen for vessel_id changes to auto-detect mode
+document.getElementById('vessel_id').addEventListener('input', function() {
+  var detected = detectModeFromVesselId(this.value);
+  if (detected && detected !== selectedMode) {
+    checkMismatch();
+  } else {
+    hideMismatch();
+  }
+});
+
+// â”€â”€ INIT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+checkHealth();
+loadStats();
+loadHistory();
+setInterval(loadStats, 30000);
+setInterval(loadHistory, 60000);
+
+// â”€â”€ FILE UPLOAD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function handleDrop(e){e.preventDefault();var f=e.dataTransfer.files[0];if(f)processUpload(f);}
+function handleFileUpload(e){var f=e.target.files[0];if(f)processUpload(f);}
+
+async function processUpload(file) {
+  var ext = '.'+file.name.split('.').pop().toLowerCase();
+  if (!['.csv','.xlsx','.xls'].includes(ext)){alert('Upload CSV or Excel');return;}
+  document.getElementById('upload-progress').style.display='flex';
+  document.getElementById('upload-results').style.display='none';
+  document.getElementById('upload-dropzone').style.opacity='0.5';
+  var fd=new FormData(); fd.append('file',file);
+  try {
+    var res=await fetch(API+'/upload/history',{method:'POST',body:fd});
+    var data=await res.json();
+    document.getElementById('upload-progress').style.display='none';
+    document.getElementById('upload-dropzone').style.opacity='1';
+    if(data.status==='success'){
+      renderUploadResults(data.analysis,file.name);
+      document.getElementById('upload-status-badge').classList.remove('hidden');
+    } else { alert('Upload failed: '+(data.error||'Unknown')); }
+  } catch(e) {
+    document.getElementById('upload-progress').style.display='none';
+    document.getElementById('upload-dropzone').style.opacity='1';
+    alert('Upload error: '+e.message);
+  }
+}
+
+function renderUploadResults(a, fn) {
+  document.getElementById('upload-results').style.display='block';
+  setText('ur-records', (a.total_records||0)+' records');
+  setText('ur-summary', a.dataset_summary||a.brahma_assessment||'');
+  setText('ur-delay-rate', a.delay_rate_percent!=null?a.delay_rate_percent+'%':'N/A');
+  setText('ur-quality', (a.data_quality_score||0)+'%');
+  var rc=a.risk_calibration||{};
+  setText('ur-calibration', rc.calibration_confidence||'N/A');
+  var ins=a.key_insights||[];
+  setHTML('ur-insights',ins.slice(0,3).map(function(i){
+    return '<div class="flex items-start gap-2 bg-white rounded-lg p-2 border border-slate-100">'
+      +'<span class="w-2 h-2 rounded-full bg-'+(i.impact==='HIGH'?'red':i.impact==='MEDIUM'?'amber':'blue')+'-500 mt-1 flex-shrink-0"></span>'
+      +'<div><p class="text-[10px] font-bold text-slate-700">'+i.insight+'</p>'
+      +'<p class="text-[9px] text-slate-400">'+(i.action||'')+'</p></div></div>';
+  }).join(''));
+  var routes=a.top_risk_routes||[];
+  if(routes.length>0){
+    document.getElementById('ur-routes-container').classList.remove('hidden');
+    setHTML('ur-routes',routes.slice(0,3).map(function(r){
+      return '<div class="flex items-center justify-between bg-white rounded-lg p-2 border border-slate-100">'
+        +'<span class="text-[10px] font-semibold text-slate-700">'+r.route+'</span>'
+        +'<span class="text-[9px] text-slate-400">delay: '+(r.avg_delay||'?')+'d | '+
+        (r.frequency||0)+' ships</span></div>';
+    }).join(''));
+  }
+  var seasonal=a.seasonal_patterns||[];
+  if(seasonal.length>0){
+    document.getElementById('ur-seasonal-container').classList.remove('hidden');
+    setHTML('ur-seasonal',seasonal.slice(0,3).map(function(s){
+      return '<div class="flex items-start gap-2 bg-white rounded-lg p-2 border border-slate-100">'
+        +'<span class="material-symbols-outlined text-amber-500 text-sm">wb_sunny</span>'
+        +'<div><p class="text-[10px] font-bold text-slate-600">'+s.period+'</p>'
+        +'<p class="text-[9px] text-slate-400">'+s.observation+'</p></div></div>';
+    }).join(''));
+  }
+}
+
+// â”€â”€ COMPUTATION STEPS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function renderComputationSteps(data) {
+  var ba=data.bedrock_analysis; if(!ba)return;
+  var cp=document.getElementById('computation-panel'); if(cp)cp.style.display='block';
+  var steps=ba.computation_steps||[];
+  var ac={NIDHI:{bg:'blue',ic:'model_training'},VAYU:{bg:'cyan',ic:'air'},
+    SANCHAR:{bg:'indigo',ic:'settings_input_antenna'},DARPANA:{bg:'amber',ic:'visibility'},
+    MARGA:{bg:'purple',ic:'local_shipping'},AKASHA:{bg:'teal',ic:'flight'},
+    VIVEKA:{bg:'violet',ic:'psychology'},ARJUNA:{bg:'green',ic:'track_changes'}};
+  setHTML('computation-steps',steps.map(function(s,idx){
+    var c=ac[s.agent]||{bg:'slate',ic:'smart_toy'};
+    var sc=s.result>=0.75?'text-red-600':s.result>=0.5?'text-orange-500':'text-green-600';
+    var sv=typeof s.result==='number'?s.result.toFixed(3):s.result;
+    return '<div class="bg-white border border-slate-100 rounded-xl p-3 hover:shadow-sm transition-all">'
+      +'<div class="flex items-start gap-3"><div class="w-7 h-7 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0 font-black text-slate-400 text-xs">'
+      +(s.step||idx+1)+'</div><div class="flex-1">'
+      +'<div class="flex items-center gap-2 mb-1.5"><div class="w-5 h-5 bg-'+c.bg+'-100 rounded flex items-center justify-center">'
+      +'<span class="material-symbols-outlined text-'+c.bg+'-700 text-xs">'+c.ic+'</span></div>'
+      +'<span class="text-[11px] font-black text-slate-800">'+s.agent+'</span>'
+      +'<span class="text-[9px] text-slate-400 italic">'+(s.sanskrit||'')+'</span>'
+      +'<span class="'+sc+' text-xs font-black ml-auto">'+sv+'</span></div>'
+      +'<div class="bg-slate-50 rounded-lg px-2.5 py-1.5 mb-1.5"><code class="text-[10px] text-slate-600">'+(s.formula||'\u2014')+'</code></div>'
+      +'<div class="grid grid-cols-2 gap-2"><div><p class="text-[9px] text-slate-400 uppercase font-bold">Input</p>'
+      +'<p class="text-[10px] text-slate-600">'+(s.input||'\u2014')+'</p></div>'
+      +'<div><p class="text-[9px] text-slate-400 uppercase font-bold">Meaning</p>'
+      +'<p class="text-[10px] text-slate-600">'+(s.interpretation||'\u2014')+'</p></div></div></div></div></div>';
+  }).join(''));
+  var math=ba.mathematical_validation||{};
+  var b=data.breakdown||{};
+  setHTML('formula-display','<p class="text-yellow-300">RS = (0.50 \u00d7 P^1.8) + (0.18 \u00d7 W) + (0.20 \u00d7 G^1.8) + (0.12 \u00d7 C)</p>'
+    +'<p class="text-green-300 mt-1"> = (0.50 \u00d7 '+(b.p_delay||0)+'^1.8) + (0.18 \u00d7 '+(b.s_weather||0)+') + (0.20 \u00d7 '+(b.s_geo||0)+'^1.8) + (0.12 \u00d7 '+(b.c_port||0)+')</p>'
+    +'<p class="text-cyan-300 mt-1"> = '+data.risk_score+' \u2192 '+data.risk_level+'</p>'
+    +'<p class="text-slate-400 mt-2 text-[9px]">\u25b6 Dominant: '+(math.dominant_factor||'\u2014')+'</p>'
+    +'<p class="text-slate-400 text-[9px]">\u25b6 Sensitivity: '+(math.sensitivity_analysis||'\u2014')+'</p>');
+}
+
+// â”€â”€ AGENT INSIGHTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function renderAgentInsights(data) {
+  var ba=data.bedrock_analysis; if(!ba)return;
+  var ins=ba.agent_insights||[];
+  setHTML('agent-insights-grid',ins.map(function(i){
+    var cc={CRITICAL:'red',HIGH:'orange',MEDIUM:'amber',LOW:'green'}[i.severity]||'slate';
+    return '<div class="bg-white border border-slate-100 rounded-xl p-3">'
+      +'<div class="flex items-center gap-2 mb-1"><span class="text-[11px] font-black text-slate-800">'+i.agent+'</span>'
+      +'<span class="bg-'+cc+'-100 text-'+cc+'-700 text-[9px] font-bold px-1.5 py-0.5 rounded-full">'+i.severity+'</span></div>'
+      +'<p class="text-[11px] text-slate-700 font-semibold mb-1">'+i.finding+'</p>'
+      +'<p class="text-[10px] text-slate-400 mb-1.5">Evidence: '+(i.evidence||'\u2014')+'</p>'
+      +'<div class="bg-blue-50 rounded-lg px-2.5 py-1.5"><p class="text-[10px] text-blue-700">\u21b3 '+(i.recommendation||'\u2014')+'</p></div></div>';
+  }).join(''));
+  var chi=ba.company_history_impact||{};
+  if(chi.used){
+    document.getElementById('company-impact-panel').classList.remove('hidden');
+    setText('company-impact-text',chi.explanation||'');
+    setText('company-impact-adj',chi.adjustment_applied>=0?'+'+chi.adjustment_applied+' pts':''+chi.adjustment_applied+' pts');
+  }
+}
+
+// â”€â”€ BEDROCK ANALYSIS RENDERER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function renderBedrockAnalysis(data) {
+  var ba=data.bedrock_analysis; if(!ba)return;
+  var bp=document.getElementById('bedrock-panel'); if(bp)bp.style.display='block';
+  setText('brahma-summary',data.executive_narrative||ba.executive_summary||'');
+  setText('brahma-confidence',(ba.confidence_score||0)+'%');
+  setText('brahma-confidence-label',ba.brahma_confidence||'\u2014');
+  var mv=ba.mathematical_validation||{};
+  setText('brahma-dominant',mv.dominant_factor||'\u2014');
+  var di=ba.domain_intelligence||{};
+  setText('brahma-financial',di.financial_impact_estimate||'\u2014');
+  setHTML('brahma-math','<p class="text-green-300">\u25b6 '+(mv.formula_breakdown||'\u2014')+'</p>'
+    +'<p class="text-yellow-300 mt-1">\u25b6 '+(mv.nonlinear_amplification||'\u2014')+'</p>'
+    +'<p class="text-cyan-300 mt-1">\u25b6 '+(mv.sensitivity_analysis||'\u2014')+'</p>');
+  var scens=ba.alternative_scenarios||[];
+  var sC={Optimistic:{bg:'bg-green-50',bd:'border-green-200',tx:'text-green-700',badge:'bg-green-100 text-green-700'},
+    Base:{bg:'bg-blue-50',bd:'border-blue-200',tx:'text-blue-700',badge:'bg-blue-100 text-blue-700'},
+    Pessimistic:{bg:'bg-red-50',bd:'border-red-200',tx:'text-red-700',badge:'bg-red-100 text-red-700'}};
+  setHTML('brahma-scenarios',scens.map(function(s){
+    var k=s.name&&s.name.includes('Optimistic')?'Optimistic':s.name&&s.name.includes('Pessimistic')?'Pessimistic':'Base';
+    var c=sC[k];var sc=s.calculated_rs>=75?'text-red-600':s.calculated_rs>=50?'text-orange-500':'text-green-600';
+    return '<div class="'+c.bg+' border '+c.bd+' rounded-xl p-3">'
+      +'<div class="flex justify-between items-start mb-1"><span class="'+c.badge+' text-[9px] font-bold px-1.5 py-0.5 rounded-full">'+s.name+'</span>'
+      +'<span class="text-[9px] text-slate-400">'+(s.probability||'\u2014')+'</span></div>'
+      +'<p class="'+sc+' text-xl font-black">'+s.calculated_rs+'</p>'
+      +'<p class="text-[9px] font-bold '+c.tx+' mb-1">'+s.risk_level+'</p>'
+      +'<p class="text-[9px] text-slate-500 mb-1">'+(s.assumption||'')+'</p>'
+      +'<code class="text-[9px] bg-white px-1.5 py-0.5 rounded block '+c.tx+'">'+(s.formula_shown||'\u2014')+'</code></div>';
+  }).join(''));
+  var acts=ba.recommended_actions||[];
+  var aC={IMMEDIATE:'border-red-400 bg-red-50','24H':'border-orange-400 bg-orange-50','72H':'border-blue-400 bg-blue-50'};
+  var aB={IMMEDIATE:'bg-red-600 text-white','24H':'bg-orange-500 text-white','72H':'bg-blue-500 text-white'};
+  setHTML('brahma-actions',acts.map(function(a){
+    return '<div class="border-l-4 '+(aC[a.priority]||'border-slate-300 bg-slate-50')+' p-3 rounded-r-xl">'
+      +'<div class="flex items-center gap-2 mb-0.5"><span class="'+(aB[a.priority]||'bg-slate-500 text-white')+' text-[9px] font-bold px-1.5 py-0.5 rounded-full">'+a.priority+'</span>'
+      +'<p class="text-[11px] font-bold text-slate-700">'+a.action+'</p></div>'
+      +'<p class="text-[10px] text-slate-500">'+a.rationale+'</p></div>';
+  }).join(''));
+  setText('brahma-verdict',ba.brahma_verdict||'\u2014');
+  renderComputationSteps(data);
+  renderAgentInsights(data);
+}
+
+// â”€â”€ LIVE COMPUTATION FEED â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+var AGENT_STEPS = [
+  {id:'step-brahma-parse',agent:'BRAHMA',icon:'psychology',color:'purple',action:'Parsing natural language input...',detail:'AWS Bedrock Claude Sonnet \u2014 intent extraction'},
+  {id:'step-vayu',agent:'VAYU',icon:'air',color:'cyan',action:'Fetching live weather data...',detail:'OpenWeatherMap One Call API \u2014 wind, pressure, visibility'},
+  {id:'step-sanchar',agent:'SANCHAR',icon:'settings_input_antenna',color:'indigo',action:'Scanning 140,000+ news sources...',detail:'NewsCatcher API \u2014 geopolitical risk, strikes, conflicts'},
+  {id:'step-nidhi',agent:'NIDHI',icon:'model_training',color:'blue',action:'Running XGBoost inference...',detail:'Trained on 180,519 shipments \u2014 SHAP explanation'},
+  {id:'step-darpana',agent:'DARPANA / MARGA / AKASHA',icon:'visibility',color:'amber',action:'Checking port/route intelligence...',detail:'SeaRates AIS + ULIP + FASTag \u2014 congestion & wait times'},
+  {id:'step-viveka',agent:'VIVEKA',icon:'gavel',color:'purple',action:'Customs & compliance check...',detail:'CBIC NTRS 2024 + OFAC sanctions + HS code analysis'},
+  {id:'step-brahma-analyze',agent:'BRAHMA',icon:'auto_awesome',color:'violet',action:'Bedrock deep analysis + scenarios...',detail:'AWS Bedrock \u2014 mathematical validation + 3 scenarios'},
+  {id:'step-arjuna',agent:'ARJUNA',icon:'track_changes',color:'green',action:'Orchestrating final composite score...',detail:'Non-linear RS formula + rule overrides applied'}
+];
+
+function buildLiveFeed(isNL) {
+  var feed = document.getElementById('live-feed');
+  if (!feed) return;
+  var steps = isNL ? AGENT_STEPS : AGENT_STEPS.slice(1);
+  feed.innerHTML = steps.map(function(s) {
+    return '<div id="'+s.id+'" class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100 opacity-40 transition-all duration-300">'
+      +'<div class="w-7 h-7 bg-'+s.color+'-100 rounded-lg flex items-center justify-center flex-shrink-0">'
+      +'<span class="material-symbols-outlined text-'+s.color+'-600 text-sm">'+s.icon+'</span></div>'
+      +'<div class="flex-1"><div class="flex items-center gap-2">'
+      +'<span class="text-[10px] font-black text-slate-600 uppercase">'+s.agent+'</span>'
+      +'<span id="'+s.id+'-status" class="text-[9px] text-slate-400 italic">'+s.action+'</span></div>'
+      +'<p class="text-[9px] text-slate-400 mt-0.5">'+s.detail+'</p></div>'
+      +'<div id="'+s.id+'-indicator" class="flex-shrink-0">'
+      +'<div class="w-4 h-4 border-2 border-slate-200 rounded-full"></div></div></div>';
+  }).join('');
+}
+
+function activateStep(stepId, status) {
+  var el = document.getElementById(stepId);
+  if (!el) return;
+  el.classList.remove('opacity-40');
+  el.classList.add('border-blue-200','bg-blue-50');
+  var statusEl = document.getElementById(stepId+'-status');
+  if (statusEl) statusEl.textContent = status || 'Processing...';
+  var indicator = document.getElementById(stepId+'-indicator');
+  if (indicator) indicator.innerHTML = '<div class="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>';
+}
+
+function completeStep(stepId, score, label) {
+  var el = document.getElementById(stepId);
+  if (!el) return;
+  el.classList.remove('border-blue-200','bg-blue-50');
+  el.classList.add('border-green-200','bg-green-50');
+  var indicator = document.getElementById(stepId+'-indicator');
+  if (indicator) {
+    if (score !== null && score !== undefined) {
+      var sc = score >= 0.75 ? 'text-red-600' : score >= 0.50 ? 'text-orange-500' : 'text-green-600';
+      indicator.innerHTML = '<span class="text-xs font-black '+sc+'">'+(score*100).toFixed(0)+'%</span>';
+    } else {
+      indicator.innerHTML = '<span class="material-symbols-outlined text-green-500 text-sm">check_circle</span>';
+    }
+  }
+  var statusEl = document.getElementById(stepId+'-status');
+  if (statusEl && label) statusEl.textContent = label;
+}
+
+function updateProgress(pct, label) {
+  var bar = document.getElementById('progress-bar');
+  var lbl = document.getElementById('progress-label');
+  if (bar) bar.style.width = pct + '%';
+  if (lbl) lbl.textContent = label;
+}
+
+function showLoadingState(show) {
+  var panels = ['empty-panel','result-panel','loading-panel','bedrock-panel','computation-panel','agent-evidence-section'];
+  for (var i = 0; i < panels.length; i++) {
+    var el = document.getElementById(panels[i]);
+    if (!el) continue;
+    if (panels[i] === 'loading-panel' && show) {
+      el.classList.remove('hidden-panel');
+      el.classList.add('visible-panel');
+    } else if (panels[i] === 'loading-panel' && !show) {
+      el.classList.remove('visible-panel');
+      el.classList.add('hidden-panel');
+    } else if (!show && panels[i] !== 'loading-panel') {
+      // Don't hide other panels when loading stops
+    } else {
+      el.classList.remove('visible-panel');
+      el.classList.add('hidden-panel');
+    }
+  }
+  if (show) {
+    // Hide all except loading
+    ['empty-panel','result-panel','blocked-panel'].forEach(function(id){
+      var p = document.getElementById(id);
+      if (p) { p.classList.remove('visible-panel'); p.classList.add('hidden-panel'); }
+    });
+  }
+}
+
+// â”€â”€ NL \u2192 FORM SYNC â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function syncNLToForm(parsed) {
+  if (!parsed) return;
+  var map = {vessel_id:'vessel_id',origin:'origin',destination:'destination',
+    days_real:'days_real',days_scheduled:'days_scheduled',quantity:'quantity',
+    month:'month',hs_code:'hs_code',departure_date:'departure_date',
+    shipping_mode_encoded:'shipping_mode_encoded'};
+  for (var key in map) {
+    if (parsed[key] !== undefined) setValue(map[key], parsed[key]);
+  }
+  if (parsed.transport_mode) {
+    selectedMode = parsed.transport_mode;
+    document.querySelectorAll('.mode-btn').forEach(function(b){
+      var colors = {sea:'bg-primary',road:'bg-purple-600',air:'bg-cyan-600'};
+      b.classList.remove('bg-primary','bg-purple-600','bg-cyan-600','text-white','shadow-sm');
+      b.classList.add('text-on-surface-variant');
+      if (b.dataset.mode === selectedMode) {
+        b.classList.remove('text-on-surface-variant');
+        b.classList.add(colors[selectedMode],'text-white','shadow-sm');
+      }
+    });
+  }
+  var notif = document.getElementById('nl-sync-notif');
+  if (notif) {
+    notif.textContent = '\u2713 Form populated from: "'+[parsed.origin,parsed.destination].filter(Boolean).join(' \u2192 ')+'"';
+    notif.style.display = 'block';
+    setTimeout(function(){ notif.style.display='none'; }, 4000);
+  }
+}
+
+// â”€â”€ AGENT EVIDENCE RENDERER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function renderAgentEvidence(data) {
+  var section = document.getElementById('agent-evidence-section');
+  if (section) section.style.display = 'block';
+  // Also show the old evidence-cards if present
+  var oldEc = document.getElementById('evidence-cards');
+  if (oldEc) oldEc.style.display = 'block';
+
+  var ev = data.evidence || {};
+  var bd = data.breakdown || {};
+  var enriched = data.agent_enrichment || {};
+
+  var sevColor = {
+    critical:'bg-red-100 text-red-700 border-red-200',
+    high:'bg-orange-100 text-orange-700 border-orange-200',
+    medium:'bg-amber-100 text-amber-700 border-amber-200',
+    low:'bg-green-100 text-green-700 border-green-200'
+  };
+
+  var AGENT_CONFIG = [
+    {key:'weather',name:'VAYU',sanskrit:'\u0935\u093e\u092f\u0941 \u2014 God of Wind',icon:'air',color:'cyan',score:bd.s_weather,
+     dataSource:(ev.weather||{}).data_source||'OpenWeatherMap API',
+     narrative:(enriched.VAYU||{}).narrative||'',
+     evidence:(ev.weather||{}).evidence_points||[]},
+    {key:'geopolitics',name:'SANCHAR',sanskrit:'\u0938\u0902\u091a\u093e\u0930 \u2014 Messenger',icon:'settings_input_antenna',color:'indigo',score:bd.s_geo,
+     dataSource:(ev.geopolitics||{}).data_source||'NewsCatcher API',
+     narrative:(enriched.SANCHAR||{}).narrative||'',
+     evidence:(ev.geopolitics||{}).evidence_points||[]},
+    {key:'ml',name:'NIDHI',sanskrit:'\u0928\u093f\u0927\u093f \u2014 Stored Knowledge',icon:'model_training',color:'blue',score:bd.p_delay,
+     dataSource:(ev.ml||{}).data_source||'XGBoost (180,519 records)',
+     narrative:(enriched.NIDHI||{}).narrative||'',
+     evidence:(ev.ml||{}).evidence_points||[]},
+    {key:'transport',name:'DARPANA',sanskrit:'\u0926\u0930\u094d\u092a\u0923 \u2014 Mirror of Truth',icon:'visibility',color:'amber',score:bd.c_port,
+     dataSource:(ev.transport||{}).data_source||'SeaRates AIS',
+     narrative:(enriched.DARPANA||{}).narrative||'',
+     evidence:(ev.transport||{}).evidence_points||[]},
+    {key:'customs',name:'VIVEKA',sanskrit:'\u0935\u093f\u0935\u0947\u0915 \u2014 Wisdom',icon:'gavel',color:'purple',score:bd.customs_risk,
+     dataSource:(ev.customs||{}).data_source||'CBIC NTRS 2024',
+     narrative:(enriched.VIVEKA||{}).narrative||'',
+     evidence:(ev.customs||{}).evidence_points||[]}
+  ];
+
+  var html = AGENT_CONFIG.map(function(agent) {
+    var pct = Math.round((agent.score||0)*100);
+    var scoreColor = pct>=75?'text-red-600':pct>=50?'text-orange-500':'text-green-600';
+    var evPoints = (agent.evidence||[]).slice(0,3);
+
+    var evHtml = evPoints.map(function(ep,idx){
+      var sev = (ep.severity||'low').toLowerCase();
+      var cls = sevColor[sev]||sevColor.low;
+      var param = ep.parameter||ep.metric||ep.feature||ep.headline||('Point '+(idx+1));
+      var val = ep.value||ep.shap_contribution||'';
+      var impact = ep.impact||ep.interpretation||ep.summary||'';
+      return '<div class="rounded-xl p-3 border '+cls+'">'
+        +'<div class="flex items-start justify-between gap-2 mb-1">'
+        +'<span class="text-[10px] font-bold">'+param+'</span>'
+        +'<span class="text-[9px] font-black shrink-0">'+val+'</span></div>'
+        +(impact?'<p class="text-[9px] opacity-80">'+impact+'</p>':'')
+        +'</div>';
+    }).join('');
+
+    return '<div class="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all">'
+      +'<div class="p-4 border-b border-slate-50 flex items-center gap-3">'
+      +'<div class="w-10 h-10 bg-'+agent.color+'-100 rounded-xl flex items-center justify-center flex-shrink-0">'
+      +'<span class="material-symbols-outlined text-'+agent.color+'-600">'+agent.icon+'</span></div>'
+      +'<div class="flex-1"><div class="flex items-center gap-2">'
+      +'<span class="text-sm font-black text-slate-800">'+agent.name+'</span>'
+      +'<span class="text-[9px] text-slate-400 italic">'+agent.sanskrit+'</span></div>'
+      +'<p class="text-[9px] text-slate-400">'+agent.dataSource+'</p></div>'
+      +'<div class="text-right"><p class="'+scoreColor+' text-2xl font-black">'+pct+'</p>'
+      +'<p class="text-[9px] text-slate-400">/ 100 risk</p></div></div>'
+      +(agent.narrative?
+        '<div class="px-4 py-3 bg-purple-50 border-b border-purple-100">'
+        +'<div class="flex items-center gap-1 mb-1">'
+        +'<span class="material-symbols-outlined text-purple-500 text-sm">auto_awesome</span>'
+        +'<span class="text-[9px] font-bold text-purple-600 uppercase">BRAHMA Analysis</span></div>'
+        +'<p class="text-xs text-slate-700 leading-relaxed">'+agent.narrative+'</p></div>'
+        :'')
+      +(evPoints.length>0?
+        '<div class="p-4 space-y-3">'
+        +'<p class="text-[9px] font-bold uppercase text-slate-400 tracking-wider">Evidence Points</p>'
+        +evHtml+'</div>'
+        :'')
+      +'</div>';
+  }).join('');
+
+  setHTML('agent-evidence-grid', html);
+}
+
+// â”€â”€ NL ASSESS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+async function nlAssess() {
+  var text = document.getElementById('nl-input').value.trim();
+  if (!text) { alert('Please enter a shipment description'); return; }
+  var btn = document.getElementById('nl-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="material-symbols-outlined text-sm animate-spin">sync</span> Thinking...';
+  showLoadingState(true);
+  buildLiveFeed(true);
+  var steps = [
+    {id:'step-brahma-parse',delay:200,label:'Intent parsed \u2713'},
+    {id:'step-vayu',delay:800,label:'Weather fetched \u2713'},
+    {id:'step-sanchar',delay:1400,label:'News scanned \u2713'},
+    {id:'step-nidhi',delay:2000,label:'ML inference done \u2713'},
+    {id:'step-darpana',delay:2600,label:'Port data loaded \u2713'},
+    {id:'step-viveka',delay:3000,label:'Customs checked \u2713'},
+    {id:'step-brahma-analyze',delay:3400,label:'Analysis complete \u2713'},
+    {id:'step-arjuna',delay:4200,label:'Score computed \u2713'}
+  ];
+  steps.forEach(function(s,idx){
+    setTimeout(function(){activateStep(s.id,'Processing...');updateProgress(((idx+1)/steps.length)*85,s.id.replace('step-','').toUpperCase()+' running...');},s.delay);
+    setTimeout(function(){completeStep(s.id,null,s.label);},s.delay+500);
+  });
+  try {
+    var res = await fetch(API+'/nlpredict',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:text})});
+    var data = await res.json();
+    if (data.error) { showLoadingState(false); showPanel('empty-panel'); alert(data.error); return; }
+    updateProgress(100,'Assessment complete!');
+    await new Promise(function(r){setTimeout(r,600)});
+    showLoadingState(false);
+    showPanel('result-panel');
+    if (data.parsed_payload) syncNLToForm(data.parsed_payload);
+    if (data.breakdown) {
+      var b = data.breakdown;
+      completeStep('step-vayu',b.s_weather,(b.s_weather*100).toFixed(0)+'% weather risk');
+      completeStep('step-sanchar',b.s_geo,(b.s_geo*100).toFixed(0)+'% geo risk');
+      completeStep('step-nidhi',b.p_delay,(b.p_delay*100).toFixed(0)+'% delay prob');
+      completeStep('step-darpana',b.c_port,(b.c_port*100).toFixed(0)+'% port risk');
+      completeStep('step-viveka',b.customs_risk,(b.customs_risk*100).toFixed(0)+'% customs');
+    }
+    currentResult = data;
+    renderResult(data);
+    renderAgentEvidence(data);
+    if (data.bedrock_analysis) renderBedrockAnalysis(data);
+    loadStats(); loadHistory();
+  } catch(e) {
+    showLoadingState(false); showPanel('empty-panel');
+    alert('Error: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<span class="material-symbols-outlined text-sm">auto_awesome</span> Ask BRAHMA';
+  }
+}
+
+// â”€â”€ CHAT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function toggleChat(){var p=document.getElementById('chat-panel');p.style.display=p.style.display==='none'?'block':'none';}
+
+async function sendChat() {
+  var input=document.getElementById('chat-input');
+  var msg=input.value.trim(); if(!msg)return;
+  var msgs=document.getElementById('chat-messages');
+  msgs.innerHTML+='<div class="flex justify-end"><div class="bg-purple-600 text-white rounded-xl px-3 py-2 text-xs max-w-[80%]">'+msg+'</div></div>'
+    +'<div id="chat-loading" class="bg-white rounded-xl px-3 py-2 text-xs text-slate-400">BRAHMA thinking...</div>';
+  input.value=''; msgs.scrollTop=msgs.scrollHeight;
+  try {
+    var res=await fetch(API+'/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:msg})});
+    var data=await res.json();
+    var cl=document.getElementById('chat-loading');if(cl)cl.remove();
+    msgs.innerHTML+='<div class="bg-purple-50 border border-purple-100 rounded-xl px-3 py-2 text-xs text-slate-700">'+data.response+'</div>';
+    msgs.scrollTop=msgs.scrollHeight;
+  } catch(e){
+    var cl=document.getElementById('chat-loading');if(cl)cl.remove();
+    msgs.innerHTML+='<div class="bg-red-50 rounded-xl px-3 py-2 text-xs text-red-600">Error. Retry.</div>';
+  }
+}
+
+// â”€â”€ COMPANY HISTORY CHECK â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+async function checkCompanyHistory(){
+  try{var res=await fetch(API+'/company/history');var data=await res.json();
+    if(data.loaded){document.getElementById('upload-status-badge').classList.remove('hidden');
+      renderUploadResults(data.analysis,data.filename||'Previous upload');}
+  }catch(e){}
+}
+checkCompanyHistory();
+</script>
+</body></html>
