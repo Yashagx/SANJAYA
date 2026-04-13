@@ -1,0 +1,23 @@
+# Large data files (exceed GitHub 100MB limit)
+sanjaya/data/DataCoSupplyChainDataset.csv
+sanjaya/data/tokenized_access_logs.csv
+sanjaya/data/archive/
+*.zip
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+
+# Model binaries (optional — remove this line if you want the pkl tracked)
+# sanjaya/model/sanjaya_model.pkl
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Temp scripts
+find.py
+list_models.py
+truncate_dashboard.ps1
