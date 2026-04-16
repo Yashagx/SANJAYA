@@ -1,0 +1,93 @@
+# ──────────────────────────────────────────────────────────────────
+# docker-compose.yml — SANJAYA Local Development Environment
+# ──────────────────────────────────────────────────────────────────
+# Usage:
+#   docker-compose up                  # Start all services
+#   docker-compose down                # Stop all services
+#   docker-compose logs -f sanjaya     # Watch app logs
+#
+# This docker-compose is ADDITIVE to existing EC2 deployment
+# It does NOT interfere with live production system
+# ──────────────────────────────────────────────────────────────────
+
+version: '3.8'
+
+services:
+  # ────────────────────────────────────────────────────────────────
+  # PostgreSQL Database Service (Optional)
+  # ────────────────────────────────────────────────────────────────
+  # For local development only. Production uses AWS RDS or EC2-local DB
+  postgres:
+    image: postgres:15-alpine
+    container_name: sanjaya-postgres-dev
+    environment:
+      POSTGRES_USER: ${DB_USER:-sanjaya_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-Sanjaya2026!}
+      POSTGRES_DB: ${DB_NAME:-sanjaya_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      # Persist data between container restarts
+      - postgres_data:/var/lib/postgresql/data
+      # Initialize schema on first run
+      - ./setup_postgres.sh:/docker-entrypoint-initdb.d/setup.sh
+    networks:
+      - sanjaya-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-sanjaya_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ────────────────────────────────────────────────────────────────
+  # SANJAYA FastAPI Application Service
+  # ────────────────────────────────────────────────────────────────
+  sanjaya:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sanjaya-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Database Configuration (connected to local postgres service)
+      DATABASE_URL: postgresql://${DB_USER:-sanjaya_user}:${DB_PASSWORD:-Sanjaya2026!}@postgres:5432/${DB_NAME:-sanjaya_db}
+      
+      # AWS / External APIs (from .env)
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_REGION: ${AWS_REGION:-ap-south-2}
+      OPENWEATHER_API_KEY: ${OPENWEATHER_API_KEY}
+      NEWSCATCHER_API_KEY: ${NEWSCATCHER_API_KEY}
+      
+      # Optional: Override for Docker environment
+      ENVIRONMENT: docker-dev
+    ports:
+      - "8000:8000"
+    volumes:
+      # Hot-reload for development (optional, remove for production)
+      - ./sanjaya:/app
+    networks:
+      - sanjaya-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+
+# ────────────────────────────────────────────────────────────────
+# Network & Volumes
+# ────────────────────────────────────────────────────────────────
+networks:
+  sanjaya-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local

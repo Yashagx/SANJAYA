@@ -1,0 +1,92 @@
+# ──────────────────────────────────────────────────────────────────
+# .dockerignore — Exclude unnecessary files from Docker build
+# ──────────────────────────────────────────────────────────────────
+# Purpose: Reduce Docker image size, build time, and copy operations
+# ──────────────────────────────────────────────────────────────────
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info
+dist/
+build/
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual Environments
+venv/
+env/
+ENV/
+
+# IDE & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.sublime-project
+.sublime-workspace
+
+# Docker
+Dockerfile
+docker-compose.yml
+docker-compose.prod.yml
+.dockerignore
+
+# Development & Testing
+test_*.py
+test_*.sh
+tests/
+.env.local
+.env.test
+pytest.ini
+tox.ini
+
+# Deployment Scripts (EC2-specific, not needed in container)
+setup_postgres.sh
+sanjaya.service
+
+# Data & Logs
+*.csv
+*.log
+logs/
+data/archive/
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.circleci/
+
+# Documentation (unless needed in container)
+*.md
+README.md
+docs/
+
+# OS Files
+Thumbs.db
+.DS_Store
+*.zip
+
+# Node (if any frontend)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Cache
+.cache/
+*.cache
+
+# Dashboard/UI build artifacts (if applicable)
+dashboard/dist/
+dashboard/build/

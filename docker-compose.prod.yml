@@ -1,0 +1,93 @@
+# ──────────────────────────────────────────────────────────────────
+# docker-compose.prod.yml — SANJAYA Production Deployment
+# ──────────────────────────────────────────────────────────────────
+# Usage (on AWS EC2):
+#   docker-compose -f docker-compose.prod.yml up -d
+#   docker-compose -f docker-compose.prod.yml logs -f sanjaya
+#   docker-compose -f docker-compose.prod.yml restart
+#
+# This configuration:
+# 1. Runs ONLY the FastAPI container (no postgres)
+# 2. Connects to external PostgreSQL (AWS RDS or EC2-local)
+# 3. Uses environment variables from .env.prod
+# 4. Maintains port 8000 (same as systemd service)
+# ──────────────────────────────────────────────────────────────────
+
+version: '3.8'
+
+services:
+  # ────────────────────────────────────────────────────────────────
+  # SANJAYA FastAPI Application (Production)
+  # ────────────────────────────────────────────────────────────────
+  sanjaya:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sanjaya-app-prod
+    environment:
+      # DATABASE_URL must point to external PostgreSQL
+      # For EC2: postgresql://sanjaya_user:password@localhost:5432/sanjaya_db
+      # For AWS RDS: postgresql://user:pass@rds-endpoint:5432/sanjaya_db
+      DATABASE_URL: ${DATABASE_URL}
+      
+      # AWS Credentials (use EC2 IAM role if possible, or env vars)
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_REGION: ${AWS_REGION:-ap-south-2}
+      
+      # External APIs
+      OPENWEATHER_API_KEY: ${OPENWEATHER_API_KEY}
+      NEWSCATCHER_API_KEY: ${NEWSCATCHER_API_KEY}
+      
+      # Environment marker
+      ENVIRONMENT: docker-prod
+    
+    ports:
+      - "8000:8000"
+    
+    networks:
+      - sanjaya-prod-network
+    
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    
+    restart: always
+    restart_policy:
+      condition: on-failure
+      delay: 10s
+      max_attempts: 5
+      window: 120s
+    
+    # Production: disable tty, use read-only where possible
+    stdin_open: false
+    tty: false
+    read_only: false
+    
+    # Resource limits (adjust based on EC2 instance size)
+    # For t3.medium: 1 CPU, 4GB RAM
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+    
+    # Logs configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+# ────────────────────────────────────────────────────────────────
+# Network
+# ────────────────────────────────────────────────────────────────
+networks:
+  sanjaya-prod-network:
+    driver: bridge
