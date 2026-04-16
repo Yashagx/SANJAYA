@@ -1,4 +1,3 @@
-import boto3
 import json
 import os
 import re
@@ -7,58 +6,60 @@ import pandas as pd
 import io
 from datetime import datetime
 from dotenv import load_dotenv
+from typing import Optional, Tuple
+
+try:
+    from groq import Groq
+except Exception:
+    Groq = None
+
+try:
+    from openai import OpenAI
+except Exception:
+    OpenAI = None
+
 load_dotenv()
 
-# Use EC2 instance profile (sanjaya-ec2-role) for auth — no explicit keys needed
-bedrock = boto3.client(
-    service_name='bedrock-runtime',
-    region_name=os.getenv('AWS_REGION', 'ap-south-2')
-)
-s3 = boto3.client('s3', region_name=os.getenv('AWS_REGION', 'ap-south-2'))
+# Prefer Groq when available, then fallback to OpenAI.
+GROQ_PRIMARY_MODEL = os.getenv("GROQ_PRIMARY_MODEL", "llama-3.3-70b-versatile")
+GROQ_FALLBACK_MODEL = os.getenv("GROQ_FALLBACK_MODEL", "llama-3.1-8b-instant")
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
-PRIMARY_MODEL  = "deepseek.v3.2"
-FALLBACK_MODEL = "apac.anthropic.claude-sonnet-4-20250514-v1:0"
-S3_BUCKET      = "sanjaya-models-2026"
+def _init_llm_client() -> Tuple[Optional[str], Optional[object], list]:
+    groq_api_key = os.getenv("GROQ_API_KEY")
+    openai_api_key = os.getenv("OPENAI_API_KEY")
 
-def call_bedrock(prompt: str, system: str, max_tokens: int = 2000) -> str:
-    for model in [PRIMARY_MODEL, FALLBACK_MODEL]:
+    if groq_api_key and Groq:
+        return "groq", Groq(api_key=groq_api_key), [GROQ_PRIMARY_MODEL, GROQ_FALLBACK_MODEL]
+
+    if openai_api_key and OpenAI:
+        return "openai", OpenAI(api_key=openai_api_key), [OPENAI_MODEL]
+
+    print("[BRAHMA] WARNING: No LLM key configured (set GROQ_API_KEY or OPENAI_API_KEY)")
+    return None, None, []
+
+LLM_PROVIDER, client, MODEL_CANDIDATES = _init_llm_client()
+
+def call_groq(prompt: str, system: str, max_tokens: int = 2000) -> str:
+    """Call configured LLM provider with model fallback support."""
+    if not client:
+        print("[BRAHMA] ERROR: LLM client not initialized")
+        return None
+
+    for model in MODEL_CANDIDATES:
         try:
-            if "anthropic" in model:
-                body = json.dumps({
-                    "anthropic_version": "bedrock-2023-05-31",
-                    "max_tokens": max_tokens,
-                    "system": system,
-                    "messages": [{"role": "user", "content": prompt}]
-                })
-            elif "deepseek" in model:
-                # Native inference payload for DeepSeek models
-                body = json.dumps({
-                    "prompt": f"{system}\n\nUser: {prompt}\n\nAssistant:",
-                    "max_tokens": max_tokens,
-                    "temperature": 0.5
-                })
-            else:
-                body = json.dumps({"prompt": prompt, "max_tokens": max_tokens})
-
-            response = bedrock.invoke_model(
-                modelId=model, body=body,
-                contentType='application/json', accept='application/json'
+            response = client.chat.completions.create(
+                model=model,
+                messages=[
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=max_tokens,
+                temperature=0.5
             )
-            result = json.loads(response['body'].read())
-            
-            # Parse based on model type
-            if "anthropic" in model:
-                return result['content'][0]['text']
-            elif "deepseek" in model:
-                if 'choices' in result and len(result['choices']) > 0:
-                    return result['choices'][0]['text']
-                elif 'generation' in result:
-                    return result['generation']
-                else:
-                    return str(result)
-            return str(result)
+            return response.choices[0].message.content
         except Exception as e:
-            print(f"[BRAHMA] {model} failed: {e}")
+            print(f"[BRAHMA] {LLM_PROVIDER}:{model} failed: {e}")
             continue
     return None
 
@@ -107,9 +108,9 @@ Rules:
 - vessel/ship → sea, truck/highway → road, flight/cargo plane → air
 - If Hormuz/Gulf/Iran mentioned → flag as critical geo zone"""
 
-    result = call_bedrock(user_input, system, max_tokens=600)
+    result = call_groq(user_input, system, max_tokens=600)
     if not result:
-        print("[BRAHMA] Using simulated NL fallback due to Bedrock failure")
+        print("[BRAHMA] Using simulated NL fallback due to LLM failure")
         return {
             "vessel_id": "MV Chennai Star",
             "origin": "Khor Fakkan",
@@ -163,7 +164,7 @@ def analyze_company_history(file_bytes: bytes, filename: str) -> dict:
         except Exception as e:
             print(f"[BRAHMA] S3 upload skipped: {e}")
 
-        # Sample data for Bedrock
+        # Sample data for LLM analysis
         sample = df.head(10).to_string()
         stats  = df.describe().to_string() if df.select_dtypes(
             include='number').shape[1] > 0 else "No numeric columns"
@@ -214,10 +215,10 @@ Analyze this company's historical shipment performance.
 Identify delay patterns, risk routes, seasonal trends.
 Provide risk calibration to improve SANJAYA predictions."""
 
-        result = call_bedrock(prompt, system, max_tokens=1500)
+        result = call_groq(prompt, system, max_tokens=1500)
         if not result:
             return {
-                "error": "Bedrock analysis unavailable",
+                "error": "LLM analysis unavailable",
                 "dataset_summary": f"Loaded {row_count} records from {filename}",
                 "total_records": row_count,
                 "key_columns_detected": columns[:10]
@@ -410,11 +411,11 @@ Generate rigorous analysis with all 6 computation steps,
 3 alternative scenarios with actual RS calculations,
 per-agent insights, and company history impact assessment."""
 
-    result = call_bedrock(prompt, system, max_tokens=2500)
+    result = call_groq(prompt, system, max_tokens=2500)
     if not result:
         return {
-            "error": "Bedrock unavailable",
-            "executive_summary": "Analysis unavailable \u2014 Bedrock connection failed",
+            "error": "LLM unavailable",
+            "executive_summary": "Analysis unavailable — LLM connection failed",
             "computation_steps": [],
             "alternative_scenarios": [],
             "agent_insights": []
@@ -426,8 +427,9 @@ per-agent insights, and company history impact assessment."""
 # ─────────────────────────────────────
 def generate_narrative(agent_results: dict, deep_analysis: dict) -> str:
     system = """You are BRAHMA, SANJAYA's intelligence narrator.
-Write a 4-5 sentence executive briefing for a logistics CEO.
-Direct, authoritative, specific. No bullets. Max 120 words."""
+Write a short executive briefing for a logistics decision-maker.
+Be crisp, professional, and intent-focused.
+2-3 sentences max, no bullets, max 80 words."""
 
     prompt = f"""
 Risk Score: {agent_results.get('risk_score')} / {agent_results.get('risk_level')}
@@ -438,7 +440,7 @@ Recommendation: {agent_results.get('recommendation')}
 Brahma Verdict: {deep_analysis.get('brahma_verdict','N/A')}
 Write executive briefing:"""
 
-    result = call_bedrock(prompt, system, max_tokens=200)
+    result = call_groq(prompt, system, max_tokens=200)
     return result if result else agent_results.get('recommendation','')
 
 # ─────────────────────────────────────
@@ -446,7 +448,7 @@ Write executive briefing:"""
 # ─────────────────────────────────────
 def enrich_agent_outputs(agent_results: dict, payload: dict) -> dict:
     """
-    Bedrock reads each agent's raw evidence and generates
+    LLM reads each agent's raw evidence and generates
     a human-readable narrative explanation for each.
     """
     evidence  = agent_results.get("evidence", {})
@@ -501,7 +503,7 @@ Evidence Data: {evidence_str}
 {agent['prompt_extra']}
 Explain in 2-3 sentences why this score is correct given this data:"""
 
-        narrative = call_bedrock(prompt, system, max_tokens=150)
+        narrative = call_groq(prompt, system, max_tokens=150)
         enriched[agent["name"]] = {
             "score": agent["score"],
             "narrative": narrative or f"{agent['name']} scored {round(agent['score']*100)}% based on available data.",

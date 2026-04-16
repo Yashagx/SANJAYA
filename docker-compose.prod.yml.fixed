@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  sanjaya:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sanjaya-app-prod
+    network_mode: host
+    env_file:
+      - .env.prod
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://sanjaya_user:Sanjaya2026!@localhost:5432/sanjaya_db}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-your-secret-key-change-in-production}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-your-encryption-key-change-in-production}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_REGION: ${AWS_REGION:-ap-south-2}
+      OPENWEATHER_API_KEY: ${OPENWEATHER_API_KEY}
+      NEWSCATCHER_API_KEY: ${NEWSCATCHER_API_KEY}
+      GROQ_API_KEY: ${GROQ_API_KEY}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      ENVIRONMENT: docker-prod
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    
+    restart: always
+    stdin_open: false
+    tty: false
+    read_only: false
+    
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+    
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"

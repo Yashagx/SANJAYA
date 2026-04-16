@@ -70,7 +70,10 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
+    id: str
     email: Optional[str] = None
+    username: Optional[str] = None
+    role: str = "user"
     is_admin: bool = False
 
 
@@ -100,14 +103,24 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 
 
 def verify_token(token: str) -> Optional[TokenData]:
-    """Verify JWT token and extract claims."""
+    """Verify JWT token and extract claims from Auth Service (port 8100)."""
     try:
+        # Use existing SECRET_KEY and ALGORITHM
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email: str = payload.get("sub")
-        is_admin: bool = payload.get("is_admin", False)
-        if email is None:
+        user_id: str = payload.get("sub")
+        username: str = payload.get("username")
+        role: str = payload.get("role", "user")
+        
+        if user_id is None:
             return None
-        return TokenData(email=email, is_admin=is_admin)
+            
+        return TokenData(
+            id=user_id,
+            email=username, # Using username as email fallback for dashboard compatibility
+            username=username,
+            role=role,
+            is_admin=(role == "admin")
+        )
     except JWTError:
         return None
 
@@ -183,7 +196,7 @@ def update_last_login(email: str):
 
 # ── Authentication dependency ──────────────────────────────────────────
 async def get_current_user(authorization: Optional[str] = Header(None)):
-    """Dependency to verify JWT token and get current user."""
+    """Dependency to verify JWT token. Trusts Auth Service claims."""
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -197,18 +210,19 @@ async def get_current_user(authorization: Optional[str] = Header(None)):
     if token_data is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid authentication credentials",
+            detail="Invalid or expired session",
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    user = get_user_by_email(token_data.email)
-    if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="User not found",
-        )
-    
-    return user
+    # Return a synthetic user object from token metadata
+    # This avoids querying a local 'users' table that doesn't exist in the unified system
+    return {
+        "id": token_data.id,
+        "email": token_data.email,
+        "username": token_data.username,
+        "role": token_data.role,
+        "is_admin": token_data.is_admin
+    }
 
 
 async def get_admin_user(current_user: dict = Depends(get_current_user)):

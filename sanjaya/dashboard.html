@@ -245,6 +245,9 @@
 <button class="nav-pill p-2.5 rounded-2xl text-slate-400" data-nav-target="logs-section" onclick="navigateToSection('logs-section')" title="Logs">
 <span class="material-symbols-outlined text-[22px]">history</span>
 </button>
+<button id="nav-admin-side" class="nav-pill p-2.5 rounded-2xl text-slate-400 hidden" data-nav-target="admin-section" onclick="navigateToSection('admin-section')" title="Admin Panel">
+<span class="material-symbols-outlined text-[22px]">admin_panel_settings</span>
+</button>
 </nav>
 <div class="flex flex-col space-y-2">
 <button class="nav-pill p-2.5 rounded-2xl text-slate-400" onclick="navigateToSection('upload-panel')" title="Upload history">
@@ -278,11 +281,20 @@
 <button class="nav-pill px-4 py-2 rounded-full text-sm font-semibold text-slate-500" data-nav-target="workspace-section" onclick="navigateToSection('workspace-section')">Assess</button>
 <button class="nav-pill px-4 py-2 rounded-full text-sm font-semibold text-slate-500" data-nav-target="results-section" onclick="navigateToSection('results-section')">Results</button>
 <button class="nav-pill px-4 py-2 rounded-full text-sm font-semibold text-slate-500" data-nav-target="logs-section" onclick="navigateToSection('logs-section')">Logs</button>
+<button id="nav-admin-top" class="nav-pill px-4 py-2 rounded-full text-sm font-semibold text-slate-500 hidden" data-nav-target="admin-section" onclick="navigateToSection('admin-section')">Admin Dashboard</button>
 </nav>
 <div class="flex items-center gap-3">
 <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-[#edf8ea] rounded-full border border-[#cfe5c5]">
 <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
 <span id="api-status" class="text-[9px] font-bold text-green-700 uppercase">Connecting...</span>
+</div>
+<div id="user-profile-pill" class="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-slate-50 rounded-full border border-slate-200">
+<span class="material-symbols-outlined text-[16px] text-slate-400">person</span>
+<div class="flex flex-col">
+    <span id="user-profile-name" class="text-[10px] font-bold text-slate-700 leading-tight">User</span>
+    <span id="user-profile-role" class="text-[8px] font-bold uppercase tracking-wider text-primary leading-tight">Role</span>
+</div>
+<button onclick="logout()" class="ml-1 text-slate-400 hover:text-red-500 transition-colors"><span class="material-symbols-outlined text-[14px]">logout</span></button>
 </div>
 <button class="hidden sm:flex items-center gap-2 rounded-full bg-[#edf5e6] px-3 py-2 text-xs font-bold text-[#43603f] border border-[#d6e4ce]" onclick="toggleChat()">
 <span class="material-symbols-outlined text-sm">smart_toy</span> AI Chat
@@ -737,6 +749,43 @@
 </table>
 </div>
 </section>
+
+<!-- Admin Panel -->
+<section id="admin-section" class="section-card rounded-[28px] overflow-hidden hidden">
+<div class="p-5 border-b border-surface-container bg-[linear-gradient(180deg,rgba(250,240,245,0.95),rgba(255,255,255,0.76))]">
+<div>
+<h2 class="text-base font-bold tracking-tight text-on-surface">Admin Dashboard</h2>
+<p class="text-[10px] text-on-surface-variant">Manage users, adjust roles, and review audit logs.</p>
+</div>
+</div>
+<div class="p-5 space-y-6">
+    <!-- User Management -->
+    <div>
+        <div class="flex justify-between items-center mb-3">
+            <h3 class="text-sm font-bold text-slate-800">User Directory</h3>
+            <button onclick="loadAdminUsers()" class="text-[10px] font-bold text-primary hover:underline flex items-center gap-1">
+                <span class="material-symbols-outlined textxs">refresh</span> Refresh
+            </button>
+        </div>
+        <div class="overflow-x-auto rounded-xl border border-outline-variant/30">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-surface-container-low">
+                    <tr>
+                        <th class="px-4 py-2 text-[9px] font-bold uppercase tracking-widest text-slate-500">Username</th>
+                        <th class="px-4 py-2 text-[9px] font-bold uppercase tracking-widest text-slate-500">Email</th>
+                        <th class="px-4 py-2 text-[9px] font-bold uppercase tracking-widest text-slate-500">Role</th>
+                        <th class="px-4 py-2 text-[9px] font-bold uppercase tracking-widest text-slate-500 text-center">Status</th>
+                        <th class="px-4 py-2 text-[9px] font-bold uppercase tracking-widest text-slate-500 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-users-tbody" class="divide-y divide-surface-container text-xs">
+                    <tr><td colspan="5" class="px-4 py-4 text-center text-slate-400">Loading users...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</section>
 </main>
 
 <!-- Chat FAB -->
@@ -827,8 +876,69 @@ async function ensureAPIReady() {
 let selectedMode = "sea";
 let currentResult = null;
 let activeScenario = null;
+let currentUser = null;
 
-const NAV_SECTIONS = ['overview-section', 'copilot-section', 'workspace-section', 'results-section', 'logs-section'];
+const NAV_SECTIONS = ['overview-section', 'copilot-section', 'workspace-section', 'results-section', 'logs-section', 'admin-section'];
+
+function parseJwt (token) {
+    try {
+        var base64Url = token.split('.')[1];
+        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+    } catch (e) {
+        return null;
+    }
+}
+
+function initAuth() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        window.location.href = '/login';
+        return;
+    }
+    
+    currentUser = parseJwt(token);
+    if (!currentUser) {
+        logout();
+        return;
+    }
+    
+    // Default username fallback
+    let displayUsername = currentUser.username || currentUser.sub || 'User';
+    if(displayUsername.includes('@')) {
+        displayUsername = displayUsername.split('@')[0];
+    }
+    
+    const nameEl = document.getElementById('user-profile-name');
+    const roleEl = document.getElementById('user-profile-role');
+    const pillEl = document.getElementById('user-profile-pill');
+    
+    if (nameEl) nameEl.innerHTML = displayUsername;
+    if (roleEl) roleEl.innerHTML = currentUser.role || 'user';
+    if (pillEl) {
+        pillEl.classList.remove('hidden');
+        pillEl.classList.add('flex');
+    }
+    
+    if (currentUser.role === 'admin') {
+        const topNav = document.getElementById('nav-admin-top');
+        const sideNav = document.getElementById('nav-admin-side');
+        const adminSec = document.getElementById('admin-section');
+        if (topNav) topNav.classList.remove('hidden');
+        if (sideNav) sideNav.classList.remove('hidden');
+        if (adminSec) adminSec.classList.remove('hidden');
+        if (typeof loadAdminUsers === 'function') setTimeout(loadAdminUsers, 1000);
+    }
+}
+
+function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('refresh_token');
+    window.location.href = '/login';
+}
 
 function toggleMobileMenu(forceOpen) {
   var menu = document.getElementById('mobile-menu');
@@ -2018,6 +2128,91 @@ async function checkCompanyHistory(){
       renderUploadResults(data.analysis,data.filename||'Previous upload');}
   }catch(e){}
 }
+// ── ADMIN PANEL ───────────────────────────────────────────────────────
+async function loadAdminUsers() {
+    if (!currentUser || currentUser.role !== 'admin') return;
+    const token = localStorage.getItem('token');
+    try {
+        await ensureAPIReady();
+        var res = await fetch(`http://${window.location.hostname}:8001/auth/admin/users`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error('Failed to load users');
+        var users = await res.json();
+        var tbody = document.getElementById('admin-users-tbody');
+        if (!tbody) return;
+        
+        var html = '';
+        users.forEach(u => {
+            var roleBadge = u.role === 'admin' ? 'bg-purple-100 text-purple-700' : 
+                           (u.role === 'manager' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-700');
+            var statusBadge = u.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
+            
+            html += `
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3 font-semibold text-slate-800">${u.username}</td>
+                    <td class="px-4 py-3 text-slate-500">${u.email_masked}</td>
+                    <td class="px-4 py-3">
+                        <select onchange="updateUserRole('${u.id}', this.value)" class="text-[10px] font-bold rounded px-2 py-1 border-slate-200 ${roleBadge}" ${u.username === currentUser.username ? 'disabled' : ''}>
+                            <option value="user" ${u.role === 'user' ? 'selected' : ''}>USER</option>
+                            <option value="manager" ${u.role === 'manager' ? 'selected' : ''}>MANAGER</option>
+                            <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>ADMIN</option>
+                        </select>
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                        <span class="px-2 py-0.5 rounded-full text-[9px] font-bold ${statusBadge}">${u.is_active ? 'ACTIVE' : 'INACTIVE'}</span>
+                    </td>
+                    <td class="px-4 py-3 text-right">
+                        ${u.username !== currentUser.username && u.is_active ? 
+                          `<button onclick="deactivateUser('${u.id}')" class="text-[10px] font-bold text-red-600 bg-red-50 px-2 py-1 rounded hover:bg-red-100">Deactivate</button>` 
+                          : ''}
+                    </td>
+                </tr>
+            `;
+        });
+        tbody.innerHTML = html;
+    } catch(e) {
+        console.error(e);
+        document.getElementById('admin-users-tbody').innerHTML = `<tr><td colspan="5" class="px-4 py-4 text-center text-red-500">Error loading users: ${e.message}</td></tr>`;
+    }
+}
+
+async function updateUserRole(userId, newRole) {
+    const token = localStorage.getItem('token');
+    try {
+        var res = await fetch(`http://${window.location.hostname}:8001/auth/admin/users/${userId}/role`, {
+            method: 'PATCH',
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ role: newRole })
+        });
+        if (!res.ok) throw new Error('Role update failed');
+        loadAdminUsers();
+    } catch(e) {
+        alert(e.message);
+        loadAdminUsers(); // reset select
+    }
+}
+
+async function deactivateUser(userId) {
+    if (!confirm('Are you sure you want to deactivate this user? They will not be able to log in.')) return;
+    const token = localStorage.getItem('token');
+    try {
+        var res = await fetch(`http://${window.location.hostname}:8001/auth/admin/users/${userId}/deactivate`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error('Deactivation failed');
+        loadAdminUsers();
+    } catch(e) {
+        alert(e.message);
+    }
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────
+initAuth();
 checkCompanyHistory();
 </script>
 </body></html>

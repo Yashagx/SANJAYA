@@ -31,7 +31,7 @@ from auth import (
     get_current_user, get_admin_user
 )
 from logger_module import (
-    log_info, log_error, log_debug, log_exception,
+    log_info, log_warning, log_error, log_debug, log_exception,
     get_recent_logs, log_startup, log_shutdown
 )
 
@@ -70,6 +70,10 @@ class PredictRequest(BaseModel):
     discount_rate: Optional[float] = 0.05
     profit_ratio: Optional[float] = 0.1
     shipping_mode_encoded: Optional[int] = 0
+
+
+class ChatRequest(BaseModel):
+    message: str
 
 
 # ── Helpers ─────────────────────────────────────────────────────────────
@@ -423,10 +427,10 @@ async def get_company_history():
 
 # ── ENDPOINT: Chat (BRAHMA) ───────────────────────
 @app.post("/chat")
-async def chat(request: dict):
+async def chat(request: ChatRequest):
     try:
-        from agents.brahma import call_bedrock
-        message = request.get("message", "")
+        from agents.brahma import call_groq
+        message = request.message
         if not message:
             log_warning("Chat called with empty message")
             return {"response": "", "brahma_powered": False}
@@ -449,13 +453,17 @@ You power 7 specialized agents: NIDHI(ML), VAYU(weather), SANCHAR(geopolitics),
 DARPANA(ports), VIVEKA(customs), MARGA(roads), AKASHA(air).
 Recent DB assessments: {hist_str}
 {company_str}
-Answer logistics questions expertly and concisely.
+Style rules:
+- Be short, crisp, and professional.
+- Infer user intent first (risk check, ETA, mitigation, compliance, route advice) and answer that intent directly.
+- Keep response to 3-5 lines, plain language, no filler.
+- Include only actionable facts or clear next steps.
 Today: {datetime.now().strftime('%Y-%m-%d')}"""
 
-        response = call_bedrock(message, system, max_tokens=400)
+        response = call_groq(message, system, max_tokens=220)
         log_info("Chat response generated")
         return {
-            "response": response or "Connection issue. Please retry.",
+            "response": response or "Unable to complete request right now. Please retry shortly.",
             "brahma_powered": True
         }
     except Exception as e:

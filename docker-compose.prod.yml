@@ -44,6 +44,7 @@ services:
       # External APIs
       OPENWEATHER_API_KEY: ${OPENWEATHER_API_KEY}
       NEWSCATCHER_API_KEY: ${NEWSCATCHER_API_KEY}
+      GROQ_API_KEY: ${GROQ_API_KEY}
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       
       # Environment marker

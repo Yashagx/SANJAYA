@@ -9,6 +9,12 @@ __pycache__/
 *.pyc
 *.pyo
 .env
+.env.*
+!.env.example
+!.env.prod.example
+*.pem
+sanjaya-key.pem
+test_*.csv
 
 # Model binaries (optional — remove this line if you want the pkl tracked)
 # sanjaya/model/sanjaya_model.pkl

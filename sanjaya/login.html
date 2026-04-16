@@ -230,8 +230,8 @@
         <div id="login-form" class="form-section active">
             <form onsubmit="handleLogin(event)">
                 <div class="form-group">
-                    <label for="login-email">Email Address</label>
-                    <input type="email" id="login-email" name="email" required>
+                    <label for="login-email">Username</label>
+                    <input type="text" id="login-email" name="username" required>
                     <div class="error" id="login-email-error"></div>
                 </div>
 
@@ -243,6 +243,26 @@
 
                 <div class="button-group">
                     <button type="submit" class="btn-login">Login</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- MFA OTP FORM (Hidden by default) -->
+        <div id="mfa-form" class="form-section">
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+                <h3 style="color: #2e7d32;">Two-Factor Authentication</h3>
+                <p style="font-size: 0.85rem; color: #666;">Please enter the 6-digit code sent to your email.</p>
+            </div>
+            <form onsubmit="handleVerifyMFA(event)">
+                <div class="form-group">
+                    <label for="mfa-otp">One-Time Password (OTP)</label>
+                    <input type="text" id="mfa-otp" name="otp" required maxlength="6" pattern="\d{6}" placeholder="123456" 
+                           style="letter-spacing: 0.5rem; text-align: center; font-size: 1.5rem; font-weight: bold;">
+                    <div class="error" id="mfa-error"></div>
+                </div>
+                <div class="button-group">
+                    <button type="submit" class="btn-login">Verify & Login</button>
+                    <button type="button" class="btn-secondary" onclick="cancelMFA()" style="width: 100%; margin-top: 0.5rem; background: none; border: none; font-size: 0.8rem; color: #666; cursor: pointer;">Cancel</button>
                 </div>
             </form>
         </div>
@@ -283,20 +303,31 @@
     </div>
 
     <script>
+        let currentChallengeId = null;
+        const AUTH_API = `http://${window.location.hostname}:8001`;
+
         function switchTab(tab) {
             // Hide all forms
             document.getElementById('login-form').classList.remove('active');
             document.getElementById('register-form').classList.remove('active');
+            if(document.getElementById('mfa-form')) document.getElementById('mfa-form').classList.remove('active');
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             
             // Show selected form
             if (tab === 'login') {
                 document.getElementById('login-form').classList.add('active');
-                document.querySelectorAll('.tab')[0].classList.add('active');
-            } else {
+                if(document.querySelectorAll('.tab')[0]) document.querySelectorAll('.tab')[0].classList.add('active');
+            } else if (tab === 'register') {
                 document.getElementById('register-form').classList.add('active');
-                document.querySelectorAll('.tab')[1].classList.add('active');
+                if(document.querySelectorAll('.tab')[1]) document.querySelectorAll('.tab')[1].classList.add('active');
+            } else if (tab === 'mfa') {
+                document.getElementById('mfa-form').classList.add('active');
             }
+        }
+
+        function cancelMFA() {
+            currentChallengeId = null;
+            switchTab('login');
         }
 
         function clearErrors() {
@@ -308,8 +339,10 @@
 
         function showError(elementId, message) {
             const el = document.getElementById(elementId);
-            el.textContent = message;
-            el.style.display = 'block';
+            if (el) {
+                el.textContent = message;
+                el.style.display = 'block';
+            }
         }
 
         function checkPasswordStrength() {
@@ -318,13 +351,13 @@
             const reqEl = document.getElementById('password-requirements');
             
             if (!password) {
-                strengthEl.style.display = 'none';
-                reqEl.style.display = 'none';
+                if(strengthEl) strengthEl.style.display = 'none';
+                if(reqEl) reqEl.style.display = 'none';
                 return;
             }
 
-            reqEl.style.display = 'block';
-            strengthEl.style.display = 'block';
+            if(reqEl) reqEl.style.display = 'block';
+            if(strengthEl) strengthEl.style.display = 'block';
 
             // Check requirements
             const hasLength = password.length >= 8;
@@ -340,26 +373,26 @@
             // Determine strength
             const score = [hasLength, hasUpper, hasDigit, hasSpecial].filter(Boolean).length;
             
-            strengthEl.classList.remove('strength-weak', 'strength-medium', 'strength-strong');
-            
-            if (score <= 1) {
-                strengthEl.textContent = 'Weak password';
-                strengthEl.classList.add('strength-weak');
-            } else if (score <= 2) {
-                strengthEl.textContent = 'Medium strength';
-                strengthEl.classList.add('strength-medium');
-            } else if (score >= 3) {
-                strengthEl.textContent = 'Strong password';
-                strengthEl.classList.add('strength-strong');
+            if(strengthEl) {
+                strengthEl.classList.remove('strength-weak', 'strength-medium', 'strength-strong');
+                if (score <= 1) {
+                    strengthEl.textContent = 'Weak password';
+                    strengthEl.classList.add('strength-weak');
+                } else if (score <= 2) {
+                    strengthEl.textContent = 'Medium strength';
+                    strengthEl.classList.add('strength-medium');
+                } else if (score >= 3) {
+                    strengthEl.textContent = 'Strong password';
+                    strengthEl.classList.add('strength-strong');
+                }
             }
         }
 
         function updateRequirement(id, met) {
             const el = document.getElementById(id);
-            if (met) {
-                el.classList.add('met');
-            } else {
-                el.classList.remove('met');
+            if (el) {
+                if (met) el.classList.add('met');
+                else el.classList.remove('met');
             }
         }
 
@@ -367,34 +400,67 @@
             event.preventDefault();
             clearErrors();
 
-            const email = document.getElementById('login-email').value;
+            const username = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
 
             try {
-                const response = await fetch('/auth/login', {
+                const response = await fetch(`${AUTH_API}/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
+                    body: JSON.stringify({ username, password })
                 });
 
                 const data = await response.json();
 
                 if (response.ok) {
-                    // Store token
-                    localStorage.setItem('token', data.access_token);
-                    localStorage.setItem('user_email', data.user_email);
-                    
-                    // Show success and redirect
-                    showSuccess(`Welcome, ${data.user_email}!`);
-                    setTimeout(() => {
-                        window.location.href = '/dashboard';
-                    }, 1500);
+                    if (data.mfa_required) {
+                        currentChallengeId = data.challenge_id;
+                        switchTab('mfa');
+                        showSuccess("MFA code sent to your registered email.");
+                    } else {
+                        onLoginSuccess(data);
+                    }
                 } else {
                     showError('login-password-error', data.detail || 'Login failed');
                 }
             } catch (error) {
                 showError('login-password-error', 'Connection error: ' + error.message);
             }
+        }
+
+        async function handleVerifyMFA(event) {
+            event.preventDefault();
+            const otp = document.getElementById('mfa-otp').value;
+            
+            try {
+                const response = await fetch(`${AUTH_API}/auth/verify-mfa`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ challenge_id: currentChallengeId, otp })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    onLoginSuccess(data);
+                } else {
+                    showError('mfa-error', data.detail || 'Verification failed');
+                }
+            } catch (error) {
+                showError('mfa-error', 'Connection error: ' + error.message);
+            }
+        }
+
+        function onLoginSuccess(data) {
+            // Store token
+            localStorage.setItem('token', data.access_token);
+            localStorage.setItem('refresh_token', data.refresh_token);
+            
+            // Show success and redirect
+            showSuccess(`Login successful! Redirecting...`);
+            setTimeout(() => {
+                window.location.href = '/dashboard';
+            }, 1000);
         }
 
         async function handleRegister(event) {
@@ -411,16 +477,17 @@
                 return;
             }
 
-            if (password.length < 8) {
-                showError('register-password-error', 'Password must be at least 8 characters');
-                return;
-            }
-
             try {
-                const response = await fetch('/auth/register', {
+                const response = await fetch(`${AUTH_API}/auth/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
+                    body: JSON.stringify({ 
+                        username: email.split('@')[0], 
+                        email: email, 
+                        password: password,
+                        role: "user",
+                        mfa_enabled: true 
+                    })
                 });
 
                 const data = await response.json();
@@ -429,10 +496,7 @@
                     showSuccess('Registration successful! Please login.');
                     setTimeout(() => {
                         switchTab('login');
-                        document.getElementById('login-email').value = email;
-                        document.getElementById('register-email').value = '';
-                        document.getElementById('register-password').value = '';
-                        document.getElementById('register-confirm').value = '';
+                        document.getElementById('login-email').value = data.username;
                     }, 1500);
                 } else {
                     showError('register-email-error', data.detail || 'Registration failed');
@@ -444,8 +508,11 @@
 
         function showSuccess(message) {
             const el = document.getElementById('successMsg');
-            el.textContent = message;
-            el.style.display = 'block';
+            if (el) {
+                el.textContent = message;
+                el.style.display = 'block';
+                setTimeout(() => { el.style.display = 'none'; }, 5000);
+            }
         }
     </script>
 </body>

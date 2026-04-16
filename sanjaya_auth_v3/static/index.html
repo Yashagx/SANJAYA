@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SANJAYA — Auth Portal</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --border: #2e3250;
+    --accent: #6c63ff;
+    --accent2: #00d4aa;
+    --danger: #ff4d6d;
+    --warn: #f4a22d;
+    --text: #e8eaf6;
+    --muted: #7b82b5;
+    --admin: #ff6b6b;
+    --manager: #ffd93d;
+    --user: #6bcb77;
+    --radius: 12px;
+    --shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ─── AUTH SCREENS ──────────────────────────────────────────── */
+  .auth-wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse at 30% 20%, #1a1464 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, #0d3b33 0%, transparent 60%),
+                var(--bg);
+    padding: 20px;
+  }
+  .auth-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 40px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: var(--shadow);
+  }
+  .auth-logo {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .auth-logo .brand {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .auth-logo .tagline { color: var(--muted); font-size: 13px; margin-top: 4px; }
+
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .field input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 11px 14px;
+    color: var(--text);
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .field input:focus { border-color: var(--accent); }
+  .field .hint { font-size: 11px; color: var(--muted); margin-top: 5px; }
+
+  .check-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; font-size: 14px; cursor: pointer; }
+  .check-row input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
+
+  .btn {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    letter-spacing: 0.5px;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: linear-gradient(135deg, var(--accent), #8b5cf6); color: #fff; }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--accent); }
+  .btn-danger { background: var(--danger); color: #fff; }
+  .btn-sm {
+    width: auto;
+    padding: 6px 14px;
+    font-size: 12px;
+    border-radius: 6px;
+  }
+
+  .link-row { text-align: center; margin-top: 16px; font-size: 13px; color: var(--muted); }
+  .link-row a { color: var(--accent); text-decoration: none; font-weight: 600; }
+  .link-row a:hover { text-decoration: underline; }
+
+  .msg { padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; font-weight: 500; }
+  .msg-err { background: rgba(255,77,109,0.12); border: 1px solid rgba(255,77,109,0.3); color: #ff8fa3; }
+  .msg-ok { background: rgba(0,212,170,0.1); border: 1px solid rgba(0,212,170,0.3); color: var(--accent2); }
+
+  .otp-hint { background: var(--surface2); border-radius: 8px; padding: 16px; margin-bottom: 16px; font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .otp-hint strong { color: var(--text); }
+
+  /* ─── APP SHELL ─────────────────────────────────────────────── */
+  #app { display: none; min-height: 100vh; }
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .topbar .logo { font-weight: 800; font-size: 18px; letter-spacing: 2px; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .topbar .user-info { display: flex; align-items: center; gap: 12px; }
+  .topbar .user-info span { font-size: 13px; color: var(--muted); }
+  .role-badge {
+    font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px;
+  }
+  .role-admin { background: rgba(255,107,107,0.15); color: var(--admin); border: 1px solid rgba(255,107,107,0.3); }
+  .role-manager { background: rgba(244,162,45,0.15); color: var(--warn); border: 1px solid rgba(244,162,45,0.3); }
+  .role-user { background: rgba(107,203,119,0.15); color: var(--user); border: 1px solid rgba(107,203,119,0.3); }
+
+  .layout { display: flex; min-height: calc(100vh - 60px); }
+  .sidebar {
+    width: 220px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 20px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; border-radius: 8px; cursor: pointer;
+    font-size: 14px; color: var(--muted); font-weight: 500;
+    transition: all 0.15s;
+    border: none; background: none; width: 100%; text-align: left;
+  }
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: rgba(108,99,255,0.15); color: var(--accent); }
+  .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+  .nav-sep { height: 1px; background: var(--border); margin: 8px 0; }
+
+  .main-content { flex: 1; padding: 28px; overflow-y: auto; }
+
+  .page-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .page-sub { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+
+  /* ─── STATS CARDS ────────────────────────────────────────────── */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 28px; }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+  .stat-card .val { font-size: 32px; font-weight: 800; }
+  .stat-card .lbl { font-size: 12px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat-accent { color: var(--accent); }
+  .stat-green { color: var(--accent2); }
+  .stat-red { color: var(--danger); }
+  .stat-warn { color: var(--warn); }
+
+  /* ─── TABLES ──────────────────────────────────────────────────── */
+  .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .table-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .table-header h3 { font-size: 15px; font-weight: 700; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead tr { background: var(--surface2); }
+  th { padding: 12px 16px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); font-weight: 600; }
+  td { padding: 12px 16px; border-top: 1px solid var(--border); }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+  .dot-green { background: var(--accent2); }
+  .dot-red { background: var(--danger); }
+  .dot-ok { color: var(--accent2); }
+  .dot-fail { color: var(--danger); }
+
+  /* ─── FILTERS ─────────────────────────────────────────────────── */
+  .filters { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+  .filters input, .filters select {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px 12px; color: var(--text); font-size: 13px; outline: none;
+  }
+  .filters input:focus, .filters select:focus { border-color: var(--accent); }
+  .filters input { flex: 1; min-width: 150px; }
+
+  /* ─── PROFILE ─────────────────────────────────────────────────── */
+  .profile-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 28px; max-width: 480px;
+  }
+  .profile-avatar {
+    width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 800;
+    margin-bottom: 20px;
+  }
+  .profile-field { margin-bottom: 14px; }
+  .profile-field .lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .profile-field .val { font-size: 15px; font-weight: 500; }
+
+  /* ─── LOADING / EMPTY ─────────────────────────────────────────── */
+  .loading { text-align: center; padding: 40px; color: var(--muted); font-size: 14px; }
+  .empty { text-align: center; padding: 40px; color: var(--muted); font-size: 14px; }
+
+  /* ─── MODAL ───────────────────────────────────────────────────── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    z-index: 200; align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; width: 360px; box-shadow: var(--shadow); }
+  .modal h3 { font-size: 17px; font-weight: 700; margin-bottom: 16px; }
+  .modal select { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; color: var(--text); font-size: 14px; margin-bottom: 16px; outline: none; }
+  .modal-btns { display: flex; gap: 10px; }
+  .modal-btns .btn { flex: 1; }
+
+  /* ─── SCROLLBAR ───────────────────────────────────────────────── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ AUTH SCREENS ══════════════════ -->
+<div id="auth-wrap" class="auth-wrap">
+
+  <!-- LOGIN -->
+  <div id="screen-login" class="auth-card">
+    <div class="auth-logo">
+      <div class="brand">SANJAYA</div>
+      <div class="tagline">Secure Authentication Portal</div>
+    </div>
+    <div id="login-msg"></div>
+    <div class="field">
+      <label>Username</label>
+      <input type="text" id="login-user" placeholder="Enter username" autocomplete="username"/>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="login-pass" placeholder="Enter password" autocomplete="current-password"/>
+    <button class="btn btn-primary" onclick="doLogin()" style="margin-bottom:12px;">Sign In</button>
+    <button class="btn" style="background:#fff; color:#444; border:1px solid #ccc; display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:16px;" onclick="alert('Google SSO is pending backend OAuth configuration.')">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" width="16" height="16" alt="G">
+      Sign in with Google
+    </button>
+    <div class="link-row">New here? <a href="#" onclick="showScreen('register')">Create account</a></div>
+    <div class="link-row" style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border)"><a href="#" onclick="showScreen('admin-login')" style="color:var(--admin); font-weight:800;">🛡️ Restricted Admin Login</a></div>
+  </div>
+
+  <!-- ADMIN LOGIN -->
+  <div id="screen-admin-login" class="auth-card" style="display:none; border-top: 4px solid var(--admin)">
+    <div class="auth-logo">
+      <div class="brand" style="background: none; color:var(--admin); -webkit-text-fill-color: initial;">SANJAYA SYSTEM</div>
+      <div class="tagline">Restricted Control Center</div>
+    </div>
+    <div id="admin-login-msg"></div>
+    <div class="field">
+      <label>Administrator ID</label>
+      <input type="text" id="admin-user" placeholder="Enter admin username" autocomplete="username"/>
+    </div>
+    <div class="field">
+      <label>Passcode</label>
+      <input type="password" id="admin-pass" placeholder="Enter admin password" autocomplete="current-password"/>
+    </div>
+    <button class="btn btn-danger" onclick="doAdminLogin()">Authorize & Access Portal</button>
+    <div class="link-row" style="margin-top:20px;"><a href="#" onclick="showScreen('login')">← Return to standard login</a></div>
+  </div>
+
+  <!-- REGISTER -->
+  <div id="screen-register" class="auth-card" style="display:none">
+    <div class="auth-logo">
+      <div class="brand">SANJAYA</div>
+      <div class="tagline">Create your account</div>
+    </div>
+    <div id="reg-msg"></div>
+    <div class="field">
+      <label>Username</label>
+      <input type="text" id="reg-user" placeholder="Choose a username"/>
+    </div>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="reg-email" placeholder="your@email.com"/>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="reg-pass" placeholder="At least 8 characters"/>
+    </div>
+    <label class="check-row">
+      <input type="checkbox" id="reg-mfa" checked/>
+      Enable email MFA (recommended)
+    </label>
+    <button class="btn btn-primary" onclick="doRegister()">Create Account</button>
+    <div class="link-row">Already have an account? <a href="#" onclick="showScreen('login')">Sign in</a></div>
+  </div>
+
+  <!-- MFA VERIFY -->
+  <div id="screen-mfa" class="auth-card" style="display:none">
+    <div class="auth-logo">
+      <div class="brand">SANJAYA</div>
+      <div class="tagline">Two-Factor Verification</div>
+    </div>
+    <div class="otp-hint">
+      A <strong>6-digit OTP</strong> has been sent to your registered email.<br/>
+      It expires in <strong id="otp-ttl">5 minutes</strong>. Enter it below.
+    </div>
+    <div id="mfa-msg"></div>
+    <div class="field">
+      <label>One-Time Password</label>
+      <input type="text" id="mfa-otp" placeholder="000000" maxlength="6" inputmode="numeric" style="letter-spacing:4px;font-size:22px;text-align:center"/>
+      <div class="hint">Check your inbox or spam folder.</div>
+    </div>
+    <button class="btn btn-primary" onclick="doVerifyMFA()">Verify &amp; Sign In</button>
+    <div class="link-row"><a href="#" onclick="showScreen('login')">← Back to login</a></div>
+  </div>
+
+</div><!-- /auth-wrap -->
+
+<!-- ══════════════════ APP SHELL ══════════════════ -->
+<div id="app">
+  <div class="topbar">
+    <div class="logo">SANJAYA</div>
+    <div class="user-info">
+      <span id="top-email"></span>
+      <span id="top-name" style="font-weight:600"></span>
+      <span id="top-role" class="role-badge"></span>
+      <button class="btn btn-secondary btn-sm" onclick="doLogout()">Sign Out</button>
+    </div>
+  </div>
+  <div class="layout">
+    <nav class="sidebar" id="sidebar">
+      <button class="nav-item active" onclick="navTo('profile')" id="nav-profile">
+        <span class="nav-icon">👤</span> My Profile
+      </button>
+      <div id="nav-manager-group" style="display:none">
+        <div class="nav-sep"></div>
+        <button class="nav-item" onclick="navTo('team')" id="nav-team">
+          <span class="nav-icon">👥</span> Team View
+        </button>
+      </div>
+      <div id="nav-admin-group" style="display:none">
+        <div class="nav-sep"></div>
+        <button class="nav-item" onclick="navTo('users')" id="nav-users">
+          <span class="nav-icon">🛡️</span> Manage Users
+        </button>
+        <button class="nav-item" onclick="navTo('logs')" id="nav-logs">
+          <span class="nav-icon">📋</span> Audit Logs
+        </button>
+        <button class="nav-item" onclick="navTo('stats')" id="nav-stats">
+          <span class="nav-icon">📊</span> Stats
+        </button>
+      </div>
+    </nav>
+    <main class="main-content" id="main-content">
+      <div class="loading">Loading…</div>
+    </main>
+  </div>
+</div>
+
+<!-- Role change modal -->
+<div class="modal-overlay" id="role-modal">
+  <div class="modal">
+    <h3>Change User Role</h3>
+    <select id="role-select">
+      <option value="user">User</option>
+      <option value="manager">Manager</option>
+      <option value="admin">Admin</option>
+    </select>
+    <div class="modal-btns">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmRoleChange()">Apply</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = '';   // same origin
+let SESSION = { token: null, refresh: null, user: null, challengeId: null };
+
+// ─── HELPERS ────────────────────────────────────────────────
+function showScreen(name) {
+  ['login','register','mfa', 'admin-login'].forEach(s => {
+    document.getElementById('screen-'+s).style.display = (s===name) ? '' : 'none';
+  });
+  document.getElementById('auth-wrap').style.display = '';
+  document.getElementById('app').style.display = 'none';
+}
+
+function showApp() {
+  document.getElementById('auth-wrap').style.display = 'none';
+  document.getElementById('app').style.display = '';
+}
+
+function setMsg(id, text, isErr=true) {
+  const el = document.getElementById(id);
+  el.innerHTML = text ? `<div class="msg ${isErr?'msg-err':'msg-ok'}">${text}</div>` : '';
+}
+
+async function api(method, path, body, noAuth=false) {
+  const headers = {'Content-Type': 'application/json'};
+  if (!noAuth && SESSION.token) headers['Authorization'] = 'Bearer ' + SESSION.token;
+  const r = await fetch(API + path, {method, headers, body: body ? JSON.stringify(body) : undefined});
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(data.detail || r.statusText);
+  return data;
+}
+
+function roleBadge(role) {
+  return `<span class="role-badge role-${role}">${role}</span>`;
+}
+
+function activeIcon(active) {
+  return active
+    ? '<span class="dot-ok">● Active</span>'
+    : '<span class="dot-fail">● Inactive</span>';
+}
+
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d+'Z').toLocaleString();
+}
+
+// ─── AUTH ────────────────────────────────────────────────────
+async function doLogin() {
+  setMsg('login-msg', '');
+  const username = document.getElementById('login-user').value.trim();
+  const password = document.getElementById('login-pass').value;
+  if (!username || !password) return setMsg('login-msg', 'Please fill in all fields.');
+  try {
+    const data = await api('POST', '/auth/login', {username, password}, true);
+    if (data.challenge_id) {
+      SESSION.challengeId = data.challenge_id;
+      document.getElementById('otp-ttl').textContent = Math.floor(data.expires_in_seconds/60) + ' minutes';
+      showScreen('mfa');
+    } else {
+      await afterLogin(data);
+    }
+  } catch(e) {
+    setMsg('login-msg', e.message);
+  }
+}
+
+async function doAdminLogin() {
+  setMsg('admin-login-msg', '');
+  const username = document.getElementById('admin-user').value.trim();
+  const password = document.getElementById('admin-pass').value;
+  if (!username || !password) return setMsg('admin-login-msg', 'Please fill in all fields.');
+  try {
+    const data = await api('POST', '/auth/login', {username, password}, true);
+    if (!data.redirect_url || !data.redirect_url.includes('admin.html')) {
+        return setMsg('admin-login-msg', 'Access denied. Valid credentials provided, but account lacks Administrator privileges.');
+    }
+    await afterLogin(data);
+  } catch(e) {
+    setMsg('admin-login-msg', e.message);
+  }
+}
+
+async function doVerifyMFA() {
+  setMsg('mfa-msg', '');
+  const otp = document.getElementById('mfa-otp').value.trim();
+  if (!otp) return setMsg('mfa-msg', 'Enter the 6-digit code.');
+  try {
+    const data = await api('POST', '/auth/verify-mfa', {challenge_id: SESSION.challengeId, otp}, true);
+    await afterLogin(data);
+  } catch(e) {
+    setMsg('mfa-msg', e.message);
+  }
+}
+
+async function afterLogin(data) {
+  SESSION.token = data.access_token;
+  SESSION.refresh = data.refresh_token;
+  localStorage.setItem('token', data.access_token);
+  const me = await api('GET', '/auth/me');
+  SESSION.user = me;
+  renderApp();
+  showApp();
+  // Redirect after a moment if URL is provided
+  if (data.redirect_url) {
+    setTimeout(() => { window.location.href = data.redirect_url; }, 1500);
+  }
+}
+
+async function doRegister() {
+  setMsg('reg-msg', '');
+  const username = document.getElementById('reg-user').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const password = document.getElementById('reg-pass').value;
+  const mfa_enabled = document.getElementById('reg-mfa').checked;
+  if (!username || !email || !password) return setMsg('reg-msg', 'Please fill in all fields.');
+  if (password.length < 8) return setMsg('reg-msg', 'Password must be at least 8 characters.');
+  try {
+    await api('POST', '/auth/register', {username, email, password, mfa_enabled}, true);
+    setMsg('reg-msg', '✓ Account created! You can now sign in.', false);
+    setTimeout(() => showScreen('login'), 1800);
+  } catch(e) {
+    setMsg('reg-msg', e.message);
+  }
+}
+
+async function doLogout() {
+  try { await api('POST', '/auth/logout', {refresh_token: SESSION.refresh}); } catch {}
+  SESSION = {token:null, refresh:null, user:null, challengeId:null};
+  showScreen('login');
+}
+
+// ─── APP RENDER ───────────────────────────────────────────────
+function renderApp() {
+  const u = SESSION.user;
+  document.getElementById('top-name').textContent = u.username;
+  document.getElementById('top-email').textContent = u.email_masked || '';
+  const rb = document.getElementById('top-role');
+  rb.textContent = u.role;
+  rb.className = 'role-badge role-' + u.role;
+
+  // Show nav sections per role
+  if (u.role === 'admin') {
+    document.getElementById('nav-admin-group').style.display = '';
+    document.getElementById('nav-manager-group').style.display = '';
+  } else if (u.role === 'manager') {
+    document.getElementById('nav-admin-group').style.display = 'none';
+    document.getElementById('nav-manager-group').style.display = '';
+  } else {
+    document.getElementById('nav-admin-group').style.display = 'none';
+    document.getElementById('nav-manager-group').style.display = 'none';
+  }
+
+  navTo('profile');
+}
+
+let currentPage = 'profile';
+function navTo(page) {
+  currentPage = page;
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById('nav-' + page);
+  if (el) el.classList.add('active');
+  const mc = document.getElementById('main-content');
+  mc.innerHTML = '<div class="loading">Loading…</div>';
+
+  const pages = {
+    profile: renderProfile,
+    users: renderUsers,
+    logs: renderLogs,
+    stats: renderStats,
+    team: renderTeam,
+  };
+  (pages[page] || renderProfile)();
+}
+
+// ─── PROFILE ─────────────────────────────────────────────────
+function renderProfile() {
+  const u = SESSION.user;
+  const initial = u.username[0].toUpperCase();
+  document.getElementById('main-content').innerHTML = `
+    <div class="page-title">My Profile</div>
+    <div class="page-sub">Your account information</div>
+    <div class="profile-card">
+      <div class="profile-avatar">${initial}</div>
+      <div class="profile-field"><div class="lbl">Username</div><div class="val">${u.username}</div></div>
+      <div class="profile-field"><div class="lbl">Email</div><div class="val">${u.email_masked || '—'}</div></div>
+      <div class="profile-field"><div class="lbl">Role</div><div class="val">${roleBadge(u.role)}</div></div>
+      <div class="profile-field"><div class="lbl">MFA Status</div><div class="val">${u.mfa_enabled ? '<span class="dot-ok">● Enabled</span>' : '<span class="dot-fail">● Disabled</span>'}</div></div>
+      <div class="profile-field"><div class="lbl">Account Status</div><div class="val">${activeIcon(u.is_active)}</div></div>
+      <br/>
+      <div style="color:var(--muted);font-size:13px;padding:12px;background:var(--surface2);border-radius:8px;">
+        🔒 After successful sign-in you will be redirected to the main application portal.
+        Your session is secured with JWT access tokens + refresh tokens.
+      </div>
+    </div>`;
+}
+
+// ─── MANAGE USERS (admin) ────────────────────────────────────
+let roleTargetId = null;
+async function renderUsers() {
+  try {
+    const users = await api('GET', '/admin/users');
+    let rows = users.map(u => `
+      <tr>
+        <td>${u.username}</td>
+        <td>${u.email_masked}</td>
+        <td>${roleBadge(u.role)}</td>
+        <td>${u.mfa_enabled ? '<span class="dot-ok">● On</span>' : '<span style="color:var(--muted)">Off</span>'}</td>
+        <td>${activeIcon(u.is_active)}</td>
+        <td>${fmtDate(u.last_login_at)}</td>
+        <td style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-secondary btn-sm" onclick="openRoleModal('${u.id}','${u.role}')">Change Role</button>
+          ${u.is_active
+            ? `<button class="btn btn-danger btn-sm" onclick="toggleActive('${u.id}',false)">Deactivate</button>`
+            : `<button class="btn btn-secondary btn-sm" onclick="toggleActive('${u.id}',true)">Activate</button>`}
+        </td>
+      </tr>`).join('');
+    document.getElementById('main-content').innerHTML = `
+      <div class="page-title">User Management</div>
+      <div class="page-sub">Manage roles and account status</div>
+      <div class="table-wrap">
+        <div class="table-header"><h3>All Users (${users.length})</h3></div>
+        <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>Username</th><th>Email</th><th>Role</th><th>MFA</th><th>Status</th><th>Last Login</th><th>Actions</th></tr></thead>
+          <tbody>${rows || '<tr><td colspan="7" class="empty">No users found</td></tr>'}</tbody>
+        </table>
+        </div>
+      </div>`;
+  } catch(e) {
+    document.getElementById('main-content').innerHTML = `<div class="msg msg-err">${e.message}</div>`;
+  }
+}
+
+function openRoleModal(userId, currentRole) {
+  roleTargetId = userId;
+  document.getElementById('role-select').value = currentRole;
+  document.getElementById('role-modal').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('role-modal').classList.remove('open');
+  roleTargetId = null;
+}
+async function confirmRoleChange() {
+  const role = document.getElementById('role-select').value;
+  try {
+    await api('PUT', `/admin/users/${roleTargetId}/role`, {role});
+    closeModal();
+    renderUsers();
+  } catch(e) {
+    alert(e.message);
+  }
+}
+async function toggleActive(userId, isActive) {
+  try {
+    await api('PUT', `/admin/users/${userId}/active`, {is_active: isActive});
+    renderUsers();
+  } catch(e) {
+    alert(e.message);
+  }
+}
+
+// ─── AUDIT LOGS (admin) ──────────────────────────────────────
+async function renderLogs() {
+  document.getElementById('main-content').innerHTML = `
+    <div class="page-title">Audit Logs</div>
+    <div class="page-sub">Full activity history across all users</div>
+    <div class="filters">
+      <input type="text" id="f-user" placeholder="Filter by username…" oninput="loadLogs()"/>
+      <select id="f-action" onchange="loadLogs()">
+        <option value="">All actions</option>
+        <option>login</option><option>register</option><option>mfa_verify</option>
+        <option>google_login</option><option>admin_change_role</option>
+        <option>admin_toggle_active</option>
+      </select>
+      <select id="f-status" onchange="loadLogs()">
+        <option value="">All statuses</option>
+        <option value="success">Success</option>
+        <option value="failure">Failure</option>
+      </select>
+    </div>
+    <div class="table-wrap" id="logs-table">
+      <div class="loading">Loading logs…</div>
+    </div>`;
+  loadLogs();
+}
+
+async function loadLogs() {
+  const username = (document.getElementById('f-user')?.value||'').trim();
+  const action = document.getElementById('f-action')?.value||'';
+  const status_filter = document.getElementById('f-status')?.value||'';
+  let qs = '?limit=200';
+  if (username) qs += '&username='+encodeURIComponent(username);
+  if (action) qs += '&action='+encodeURIComponent(action);
+  if (status_filter) qs += '&status_filter='+encodeURIComponent(status_filter);
+  try {
+    const logs = await api('GET', '/admin/logs'+qs);
+    const rows = logs.map(l => `
+      <tr>
+        <td style="white-space:nowrap">${fmtDate(l.timestamp)}</td>
+        <td>${l.username||'—'}</td>
+        <td><code style="font-size:12px;color:var(--accent)">${l.action}</code></td>
+        <td>${l.status==='success' ? '<span class="dot-ok">✓ success</span>' : '<span class="dot-fail">✗ failure</span>'}</td>
+        <td style="color:var(--muted);max-width:280px;overflow:hidden;text-overflow:ellipsis">${l.detail||'—'}</td>
+        <td style="color:var(--muted)">${l.ip_address||'—'}</td>
+      </tr>`).join('');
+    document.getElementById('logs-table').innerHTML = `
+      <div class="table-header"><h3>Logs (${logs.length})</h3></div>
+      <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>Timestamp</th><th>User</th><th>Action</th><th>Status</th><th>Detail</th><th>IP</th></tr></thead>
+        <tbody>${rows||'<tr><td colspan="6" class="empty">No logs found</td></tr>'}</tbody>
+      </table>
+      </div>`;
+  } catch(e) {
+    document.getElementById('logs-table').innerHTML = `<div class="msg msg-err">${e.message}</div>`;
+  }
+}
+
+// ─── STATS (admin) ────────────────────────────────────────────
+async function renderStats() {
+  try {
+    const s = await api('GET', '/admin/stats');
+    document.getElementById('main-content').innerHTML = `
+      <div class="page-title">System Stats</div>
+      <div class="page-sub">Overview of users and activity</div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="val stat-accent">${s.total_users}</div><div class="lbl">Total Users</div></div>
+        <div class="stat-card"><div class="val stat-green">${s.active_users}</div><div class="lbl">Active Users</div></div>
+        <div class="stat-card"><div class="val stat-red">${s.admins}</div><div class="lbl">Admins</div></div>
+        <div class="stat-card"><div class="val stat-warn">${s.managers}</div><div class="lbl">Managers</div></div>
+        <div class="stat-card"><div class="val stat-accent">${s.total_logs}</div><div class="lbl">Total Log Entries</div></div>
+        <div class="stat-card"><div class="val stat-red">${s.failed_logins}</div><div class="lbl">Failed Logins</div></div>
+      </div>`;
+  } catch(e) {
+    document.getElementById('main-content').innerHTML = `<div class="msg msg-err">${e.message}</div>`;
+  }
+}
+
+// ─── TEAM VIEW (manager) ─────────────────────────────────────
+async function renderTeam() {
+  try {
+    const [users, stats] = await Promise.all([
+      api('GET', '/manager/users'),
+      api('GET', '/manager/stats'),
+    ]);
+    const rows = users.map(u => `
+      <tr>
+        <td>${u.username}</td>
+        <td>${u.email_masked}</td>
+        <td>${roleBadge(u.role)}</td>
+        <td>${u.mfa_enabled ? '<span class="dot-ok">● On</span>' : '<span style="color:var(--muted)">Off</span>'}</td>
+        <td>${activeIcon(u.is_active)}</td>
+        <td>${fmtDate(u.last_login_at)}</td>
+      </tr>`).join('');
+    document.getElementById('main-content').innerHTML = `
+      <div class="page-title">Team View</div>
+      <div class="page-sub">Read-only view of all team members</div>
+      <div class="stats-grid" style="margin-bottom:24px">
+        <div class="stat-card"><div class="val stat-accent">${stats.total_users}</div><div class="lbl">Total Users</div></div>
+        <div class="stat-card"><div class="val stat-green">${stats.active_users}</div><div class="lbl">Active Users</div></div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-header"><h3>All Members (${users.length})</h3></div>
+        <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>Username</th><th>Email</th><th>Role</th><th>MFA</th><th>Status</th><th>Last Login</th></tr></thead>
+          <tbody>${rows||'<tr><td colspan="6" class="empty">No users</td></tr>'}</tbody>
+        </table>
+        </div>
+      </div>`;
+  } catch(e) {
+    document.getElementById('main-content').innerHTML = `<div class="msg msg-err">${e.message}</div>`;
+  }
+}
+
+// ─── ENTER KEY SUPPORT ────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const ls = document.getElementById('screen-login');
+  const rs = document.getElementById('screen-register');
+  const ms = document.getElementById('screen-mfa');
+  const as = document.getElementById('screen-admin-login');
+  if (ls && ls.style.display !== 'none') doLogin();
+  else if (rs && rs.style.display !== 'none') doRegister();
+  else if (ms && ms.style.display !== 'none') doVerifyMFA();
+  else if (as && as.style.display !== 'none') doAdminLogin();
+});
+
+// ─── INIT ─────────────────────────────────────────────────────
+showScreen('login');
+</script>
+</body>
+</html>
