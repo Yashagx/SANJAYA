@@ -3,7 +3,7 @@
 SANJAYA is a state-of-the-art logistics risk intelligence system that utilizes a resilient multi-agent architecture. Powered by BRAHMA (an AI Logistics Executive) and supporting fallback routing via Amazon Bedrock, it provides real-time shipment delay predictions, geopolitical risk assessments, intelligent routing optimizations, and an interactive "What-If" simulation environment.
 
 🌐 Live Dashboard:
-👉 http://16.112.128.251:8000/dashboard#
+👉 http://18.61.252.222:8001/
 ---
 
 ## 📸 System Dashboard & Visual Overview
