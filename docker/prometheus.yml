@@ -1,0 +1,40 @@
+# Prometheus Configuration
+# Metrics scraping and retention
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'sanjaya'
+    environment: 'production'
+
+scrape_configs:
+  # SANJAYA API Server
+  - job_name: 'sanjaya-api'
+    static_configs:
+      - targets: ['localhost:8000']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Elasticsearch metrics (if using elastic)
+  - job_name: 'elasticsearch'
+    static_configs:
+      - targets: ['elasticsearch:9200']
+
+  # Docker daemon (if monitoring containers)
+  - job_name: 'docker'
+    static_configs:
+      - targets: ['localhost:9323']
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+rule_files:
+  - 'alert_rules.yml'

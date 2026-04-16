@@ -1,0 +1,14 @@
+# Grafana Dashboards Configuration
+# Provisions pre-configured dashboards
+
+apiVersion: 1
+
+providers:
+  - name: 'SANJAYA Dashboards'
+    orgId: 1
+    folder: 'SANJAYA'
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /etc/grafana/provisioning/dashboards

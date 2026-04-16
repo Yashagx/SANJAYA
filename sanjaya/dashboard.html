@@ -4,7 +4,7 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>SANJAYA | Shipment Risk Intelligence</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
         tailwind.config = {
@@ -12,53 +12,53 @@
             theme: {
                 extend: {
                     "colors": {
-                        "primary": "#003fb1",
-                        "tertiary": "#004f72",
+                        "primary": "#2f7d32",
+                        "tertiary": "#2f6f4f",
                         "error": "#ba1a1a",
-                        "tertiary-fixed": "#c9e6ff",
-                        "on-surface-variant": "#434654",
-                        "on-secondary-container": "#54647a",
-                        "surface-container-low": "#f2f4f6",
-                        "primary-fixed-dim": "#b5c4ff",
-                        "on-background": "#191c1e",
-                        "surface-tint": "#1353d8",
-                        "surface-container-high": "#e6e8ea",
-                        "on-tertiary-fixed-variant": "#004c6e",
-                        "on-primary-fixed-variant": "#003dab",
-                        "tertiary-container": "#006895",
-                        "surface-variant": "#e0e3e5",
-                        "surface-container": "#eceef0",
+                        "tertiary-fixed": "#d8f1dc",
+                        "on-surface-variant": "#485246",
+                        "on-secondary-container": "#546458",
+                        "surface-container-low": "#f4f8f1",
+                        "primary-fixed-dim": "#9cdda0",
+                        "on-background": "#172019",
+                        "surface-tint": "#2f7d32",
+                        "surface-container-high": "#e7ede2",
+                        "on-tertiary-fixed-variant": "#285a3c",
+                        "on-primary-fixed-variant": "#215b24",
+                        "tertiary-container": "#4e9a73",
+                        "surface-variant": "#dde5d8",
+                        "surface-container": "#edf3e8",
                         "on-tertiary": "#ffffff",
-                        "on-secondary-fixed-variant": "#38485d",
-                        "on-secondary-fixed": "#0b1c30",
-                        "on-primary-container": "#d4dcff",
-                        "secondary-container": "#d0e1fb",
-                        "inverse-surface": "#2d3133",
-                        "secondary-fixed": "#d3e4fe",
-                        "primary-fixed": "#dbe1ff",
-                        "on-tertiary-fixed": "#001e2f",
-                        "inverse-primary": "#b5c4ff",
-                        "on-primary-fixed": "#00174d",
-                        "secondary": "#505f76",
-                        "surface-bright": "#f7f9fb",
+                        "on-secondary-fixed-variant": "#415344",
+                        "on-secondary-fixed": "#162317",
+                        "on-primary-container": "#ebffe9",
+                        "secondary-container": "#dbe8d3",
+                        "inverse-surface": "#273126",
+                        "secondary-fixed": "#deebd8",
+                        "primary-fixed": "#ddf3dc",
+                        "on-tertiary-fixed": "#11271a",
+                        "inverse-primary": "#9cdda0",
+                        "on-primary-fixed": "#113515",
+                        "secondary": "#5c6d5d",
+                        "surface-bright": "#fbfdf8",
                         "on-secondary": "#ffffff",
                         "on-primary": "#ffffff",
-                        "inverse-on-surface": "#eff1f3",
+                        "inverse-on-surface": "#edf2ea",
                         "surface-container-lowest": "#ffffff",
-                        "tertiary-fixed-dim": "#89ceff",
-                        "surface": "#f7f9fb",
-                        "on-tertiary-container": "#bee2ff",
+                        "tertiary-fixed-dim": "#a6dcc1",
+                        "surface": "#f9fcf6",
+                        "on-tertiary-container": "#e2f7e8",
                         "on-error": "#ffffff",
-                        "on-surface": "#191c1e",
+                        "on-surface": "#172019",
                         "error-container": "#ffdad6",
-                        "background": "#f7f9fb",
-                        "primary-container": "#1a56db",
+                        "background": "#f9fcf6",
+                        "primary-container": "#4a9a4d",
                         "on-error-container": "#93000a",
-                        "secondary-fixed-dim": "#b7c8e1",
-                        "outline-variant": "#c3c5d7",
-                        "outline": "#737686",
-                        "surface-dim": "#d8dadc",
-                        "surface-container-highest": "#e0e3e5"
+                        "secondary-fixed-dim": "#c3d4bb",
+                        "outline-variant": "#c9d4c2",
+                        "outline": "#77836f",
+                        "surface-dim": "#dbe2d6",
+                        "surface-container-highest": "#e1e8dc"
                     },
                     "borderRadius": {
                         "DEFAULT": "0.125rem",
@@ -67,9 +67,9 @@
                         "full": "0.75rem"
                     },
                     "fontFamily": {
-                        "headline": ["Inter"],
-                        "body": ["Inter"],
-                        "label": ["Inter"]
+                        "headline": ["Space Grotesk"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"]
                     }
                 },
             },
@@ -79,11 +79,124 @@
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
-        body { font-family: 'Inter', sans-serif; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background:
+                radial-gradient(circle at 10% 10%, rgba(138, 204, 111, 0.24), transparent 20%),
+                radial-gradient(circle at 85% 14%, rgba(114, 184, 151, 0.18), transparent 22%),
+                radial-gradient(circle at 50% 100%, rgba(104, 160, 122, 0.18), transparent 28%),
+                linear-gradient(180deg, #f7fbf3 0%, #eef7ea 40%, #e6f0e1 100%);
+            color: #172019;
+        }
+        h1, h2, h3, h4, .font-headline {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 18% 22%, rgba(255,255,255,0.44) 0 2px, transparent 3px) 0 0 / 170px 170px,
+                radial-gradient(circle at 78% 62%, rgba(255,255,255,0.28) 0 1.5px, transparent 2.5px) 0 0 / 220px 220px;
+            opacity: 0.5;
+        }
         .glass-panel {
-            background: rgba(255, 255, 255, 0.92);
+            background: rgba(251, 253, 248, 0.88);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
+            box-shadow: 0 20px 60px rgba(57, 82, 47, 0.12);
+        }
+        .app-shell {
+            position: relative;
+        }
+        .section-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(245,250,241,0.88));
+            border: 1px solid rgba(89, 123, 77, 0.14);
+            box-shadow: 0 24px 60px rgba(57, 82, 47, 0.10);
+        }
+        .nav-pill {
+            transition: all 0.2s ease;
+        }
+        .nav-pill.active-nav,
+        .nav-pill:hover {
+            background: rgba(47, 125, 50, 0.10);
+            color: #2f7d32;
+        }
+        .hero-kpi {
+            background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(242,250,238,0.96));
+            border: 1px solid rgba(74, 154, 77, 0.14);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+        }
+        .hero-chip {
+            border: 1px solid rgba(89, 123, 77, 0.18);
+            background: rgba(249,252,246,0.82);
+        }
+        .mobile-sheet {
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+        .mobile-sheet.hidden {
+            display: none;
+        }
+        .floating-action {
+            box-shadow: 0 18px 45px rgba(47, 125, 50, 0.28);
+        }
+        .frog-gradient {
+            background:
+                radial-gradient(circle at top left, rgba(210, 242, 197, 0.95), transparent 35%),
+                linear-gradient(135deg, #325a31 0%, #4d8e44 45%, #74b564 100%);
+        }
+        .pond-panel {
+            background:
+                radial-gradient(circle at 20% 18%, rgba(219, 250, 210, 0.42), transparent 24%),
+                linear-gradient(180deg, #123122 0%, #183826 100%);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+        }
+        .lily-grid {
+            background-image:
+                linear-gradient(rgba(33, 62, 31, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(33, 62, 31, 0.04) 1px, transparent 1px);
+            background-size: 18px 18px;
+        }
+        .pond-ring {
+            position: relative;
+            overflow: hidden;
+        }
+        .pond-ring::after {
+            content: "";
+            position: absolute;
+            inset: auto -20% -70% auto;
+            width: 180px;
+            height: 180px;
+            border-radius: 999px;
+            border: 1px solid rgba(203, 242, 191, 0.28);
+            box-shadow:
+                0 0 0 18px rgba(203, 242, 191, 0.07),
+                0 0 0 38px rgba(203, 242, 191, 0.04);
+        }
+        .lily-badge {
+            background: linear-gradient(180deg, rgba(239,252,232,0.95), rgba(215,244,204,0.92));
+            border: 1px solid rgba(74, 154, 77, 0.18);
+        }
+        .frog-input {
+            background: rgba(244, 249, 240, 0.95);
+            border: 1px solid rgba(120, 145, 109, 0.14);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+        }
+        .frog-input:focus {
+            outline: none;
+            border-color: rgba(47,125,50,0.35);
+            box-shadow: 0 0 0 4px rgba(47,125,50,0.10);
+        }
+        .frog-surface {
+            background: linear-gradient(180deg, rgba(253,255,252,0.96), rgba(241,247,236,0.96));
+            border: 1px solid rgba(105, 133, 95, 0.12);
+        }
+        .frog-tag {
+            background: rgba(231, 244, 225, 0.9);
+            color: #2f6f4f;
+            border: 1px solid rgba(79, 125, 92, 0.16);
         }
         /* Smooth transitions for all panels */
         .panel-fade { transition: opacity 0.35s ease, transform 0.35s ease; }
@@ -97,7 +210,7 @@
         .mismatch-banner.collapsed { max-height: 0; opacity: 0; margin-top: 0; margin-bottom: 0; }
         .mismatch-banner.expanded { max-height: 120px; opacity: 1; }
         /* Scenario button active ring */
-        .scenario-active { border-color: #003fb1 !important; background: rgba(0,63,177,0.06) !important; box-shadow: 0 0 0 2px rgba(0,63,177,0.15); }
+        .scenario-active { border-color: #2f7d32 !important; background: rgba(47,125,50,0.08) !important; box-shadow: 0 0 0 2px rgba(47,125,50,0.15); }
         /* Score counter animation */
         @keyframes countUp { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
         .score-animate { animation: countUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
@@ -111,111 +224,192 @@
 </head>
 <body class="bg-surface text-on-surface min-h-screen">
 
-<!-- Side Navigation Bar â€” FIXED, z-40 -->
-<div class="fixed left-0 top-0 hidden lg:flex flex-col h-screen w-[72px] bg-white/90 backdrop-blur-xl border-r border-outline-variant/10 items-center py-5 space-y-6 z-40">
-<div class="w-11 h-11 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
-<span class="text-white font-black text-lg">S</span>
-</div>
+<!-- Side Navigation Bar -->
+<aside class="fixed left-0 top-0 hidden lg:flex flex-col h-screen w-[88px] bg-[#f5faef]/88 backdrop-blur-xl border-r border-[#8ab574]/15 items-center py-5 space-y-6 z-40">
+<button onclick="navigateToSection('overview-section')" class="w-12 h-12 frog-gradient rounded-[20px] flex items-center justify-center shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-white text-[24px]">pets</span>
+</button>
 <nav class="flex flex-col space-y-2 flex-grow">
-<a class="p-2.5 bg-primary/10 text-primary rounded-xl transition-all" href="#" title="Dashboard">
-<span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">dashboard</span>
-</a>
-<a class="p-2.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-xl transition-all" href="#" title="Routes">
-<span class="material-symbols-outlined text-[22px]">public</span>
-</a>
-<a class="p-2.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-xl transition-all" href="#" title="Alerts">
-<span class="material-symbols-outlined text-[22px]">warning</span>
-</a>
-<a class="p-2.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-xl transition-all" href="#" title="Audits">
-<span class="material-symbols-outlined text-[22px]">fact_check</span>
-</a>
-<a class="p-2.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-xl transition-all" href="#" title="Analytics">
+<button class="nav-pill active-nav p-2.5 rounded-2xl text-primary" data-nav-target="overview-section" onclick="navigateToSection('overview-section')" title="Overview">
+<span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">space_dashboard</span>
+</button>
+<button class="nav-pill p-2.5 rounded-2xl text-slate-400" data-nav-target="copilot-section" onclick="navigateToSection('copilot-section')" title="BRAHMA">
+<span class="material-symbols-outlined text-[22px]">psychology</span>
+</button>
+<button class="nav-pill p-2.5 rounded-2xl text-slate-400" data-nav-target="workspace-section" onclick="navigateToSection('workspace-section')" title="Assessments">
+<span class="material-symbols-outlined text-[22px]">monitoring</span>
+</button>
+<button class="nav-pill p-2.5 rounded-2xl text-slate-400" data-nav-target="results-section" onclick="navigateToSection('results-section')" title="Results">
 <span class="material-symbols-outlined text-[22px]">analytics</span>
-</a>
+</button>
+<button class="nav-pill p-2.5 rounded-2xl text-slate-400" data-nav-target="logs-section" onclick="navigateToSection('logs-section')" title="Logs">
+<span class="material-symbols-outlined text-[22px]">history</span>
+</button>
 </nav>
 <div class="flex flex-col space-y-2">
-<a class="p-2.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-xl transition-all" href="#" title="Help">
-<span class="material-symbols-outlined text-[22px]">help</span>
-</a>
-<a class="p-2.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-xl transition-all" href="#" title="System">
-<span class="material-symbols-outlined text-[22px]">sensors</span>
-</a>
+<button class="nav-pill p-2.5 rounded-2xl text-slate-400" onclick="navigateToSection('upload-panel')" title="Upload history">
+<span class="material-symbols-outlined text-[22px]">upload_file</span>
+</button>
+<button class="nav-pill p-2.5 rounded-2xl text-slate-400" onclick="toggleChat()" title="Open chat">
+<span class="material-symbols-outlined text-[22px]">smart_toy</span>
+</button>
 </div>
-</div>
+</aside>
 
-<!-- Main wrapper â€” offset by sidebar width on large screens -->
-<div class="lg:ml-[72px]">
-
-<!-- Top Navigation â€” inside the wrapper so it doesn't overlap sidebar -->
-<header class="sticky top-0 z-30 glass-panel shadow-sm px-6 py-3 flex justify-between items-center w-full">
+<div class="app-shell lg:ml-[88px]">
+<header class="sticky top-0 z-30 px-4 py-4 sm:px-6">
+<div class="glass-panel max-w-[1520px] mx-auto rounded-[28px] border border-white/70 shadow-lg px-4 py-3 sm:px-6">
+<div class="flex items-center justify-between gap-4">
 <div class="flex items-center gap-3">
-<div class="bg-primary p-2 rounded-xl flex items-center justify-center lg:hidden">
-<span class="text-white font-black text-xl tracking-tighter">S</span>
+<button class="lg:hidden w-11 h-11 rounded-2xl bg-slate-900 text-white flex items-center justify-center" onclick="toggleMobileMenu()">
+<span class="material-symbols-outlined text-[20px]">menu</span>
+</button>
+<div class="w-11 h-11 frog-gradient rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-white text-[22px]">pets</span>
 </div>
 <div>
-<h1 class="text-xl font-black text-slate-900 tracking-tighter leading-none">SANJAYA</h1>
-<p class="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mt-0.5">Shipment Risk Intelligence</p>
+<p class="text-[10px] font-semibold uppercase tracking-[0.35em] text-[#66835f]">SANJAYA Pond Deck</p>
+<h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-none">Shipment Risk Intelligence</h1>
 </div>
 </div>
-<!-- Center Stat Pills -->
-<div class="hidden md:flex items-center gap-2">
-<div class="flex items-center gap-1.5 bg-surface-container px-2.5 py-1 rounded-full border border-outline-variant/10">
-<span class="text-[9px] font-bold text-on-surface-variant uppercase">Total</span>
-<span id="stat-total" class="text-xs font-bold text-primary">â€”</span>
-</div>
-<div class="flex items-center gap-1.5 bg-red-50 px-2.5 py-1 rounded-full border border-red-100">
-<span class="text-[9px] font-bold text-red-600 uppercase">Critical</span>
-<span id="stat-critical" class="text-xs font-bold text-red-600">â€”</span>
-</div>
-<div class="flex items-center gap-1.5 bg-orange-50 px-2.5 py-1 rounded-full">
-<span class="text-[9px] font-bold text-orange-600 uppercase">High</span>
-<span id="stat-high" class="text-xs font-bold text-orange-600">â€”</span>
-</div>
-<div class="flex items-center gap-1.5 bg-blue-50 px-2.5 py-1 rounded-full">
-<span class="text-[9px] font-bold text-primary uppercase">Avg RS</span>
-<span id="stat-avg" class="text-xs font-bold text-primary">â€”</span>
-</div>
-</div>
+<nav class="hidden xl:flex items-center gap-1 rounded-full bg-[#edf5e6]/90 p-1 border border-[#cfe0c5]">
+<button class="nav-pill active-nav px-4 py-2 rounded-full text-sm font-semibold text-primary" data-nav-target="overview-section" onclick="navigateToSection('overview-section')">Overview</button>
+<button class="nav-pill px-4 py-2 rounded-full text-sm font-semibold text-slate-500" data-nav-target="copilot-section" onclick="navigateToSection('copilot-section')">BRAHMA</button>
+<button class="nav-pill px-4 py-2 rounded-full text-sm font-semibold text-slate-500" data-nav-target="workspace-section" onclick="navigateToSection('workspace-section')">Assess</button>
+<button class="nav-pill px-4 py-2 rounded-full text-sm font-semibold text-slate-500" data-nav-target="results-section" onclick="navigateToSection('results-section')">Results</button>
+<button class="nav-pill px-4 py-2 rounded-full text-sm font-semibold text-slate-500" data-nav-target="logs-section" onclick="navigateToSection('logs-section')">Logs</button>
+</nav>
 <div class="flex items-center gap-3">
-<div class="flex items-center gap-1.5 px-2.5 py-1 bg-green-50 rounded-full border border-green-100">
+<div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-[#edf8ea] rounded-full border border-[#cfe5c5]">
 <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
 <span id="api-status" class="text-[9px] font-bold text-green-700 uppercase">Connecting...</span>
 </div>
-<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:bg-slate-100 p-1.5 rounded-full transition-colors text-[20px]">notifications</span>
-<img alt="User" class="w-7 h-7 rounded-full object-cover border border-outline-variant/30" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXDLpa-1ha4R6EjQrnmoM3_k2SaJSLh0agX2GrMew03ruG_Vl3p0AffW60U3UpRoHcKrc5zW29-S4sonUY3t1DYDcvwAOoLf_KdEqQfGRqtClrzg5DplQKxhrpvgXFNgehWPm4hUBfCY1Z5DiQZuIEsQ_TFzGH_4TUCRl6YMhxTrI-wKLVcKe4yiNBKuA-SlByP97Vu_kDloslgq8ovOSRwkxqSNYMThgwNHV8xT6q_wIDlAvUVyMNuJ-jnlhf8BfyBcPnwAmdxhc"/>
+<button class="hidden sm:flex items-center gap-2 rounded-full bg-[#edf5e6] px-3 py-2 text-xs font-bold text-[#43603f] border border-[#d6e4ce]" onclick="toggleChat()">
+<span class="material-symbols-outlined text-sm">smart_toy</span> AI Chat
+</button>
+</div>
+</div>
 </div>
 </header>
 
-<main class="max-w-[1520px] mx-auto p-5 space-y-5">
-
-<!-- BRAHMA NL Bar -->
-<div class="bg-white rounded-xl shadow-sm border border-outline-variant/15 p-4 flex gap-3 items-center">
-<div class="w-8 h-8 bg-gradient-to-br from-purple-600 to-indigo-700 rounded-lg flex items-center justify-center flex-shrink-0">
-<span class="text-white font-black text-sm">B</span>
+<div id="mobile-menu" class="mobile-sheet hidden fixed inset-0 z-40 lg:hidden">
+<div class="absolute inset-0 bg-slate-900/35" onclick="toggleMobileMenu(false)"></div>
+<div class="absolute top-4 left-4 right-4 rounded-[28px] bg-[#fbfdf8] p-4 shadow-2xl border border-[#dbe7d3]">
+<div class="flex items-center justify-between mb-4">
+<div>
+<p class="text-[10px] font-semibold uppercase tracking-[0.35em] text-[#66835f]">Pond Map</p>
+<p class="text-lg font-black text-slate-900">Dashboard Sections</p>
 </div>
-<input id="nl-input" class="flex-1 bg-slate-50 border-none rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-300 transition-all" placeholder='Try: "Assess MV Chennai Star from Khor Fakkan to Rotterdam via Hormuz urgently"' type="text" onkeydown="if(event.key==='Enter')nlAssess()"/>
-<button id="nl-btn" onclick="nlAssess()" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-2.5 rounded-lg text-xs font-bold hover:shadow-lg transition-all flex items-center gap-1.5 flex-shrink-0">
+<button class="w-10 h-10 rounded-2xl bg-[#edf5e6] text-[#43603f]" onclick="toggleMobileMenu(false)">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<button class="nav-pill text-left rounded-2xl bg-[#f2f8ee] px-4 py-3" onclick="navigateToSection('overview-section', true)">Overview</button>
+<button class="nav-pill text-left rounded-2xl bg-[#f2f8ee] px-4 py-3" onclick="navigateToSection('copilot-section', true)">BRAHMA</button>
+<button class="nav-pill text-left rounded-2xl bg-[#f2f8ee] px-4 py-3" onclick="navigateToSection('workspace-section', true)">Assess</button>
+<button class="nav-pill text-left rounded-2xl bg-[#f2f8ee] px-4 py-3" onclick="navigateToSection('results-section', true)">Results</button>
+<button class="nav-pill text-left rounded-2xl bg-[#f2f8ee] px-4 py-3" onclick="navigateToSection('upload-panel', true)">Upload</button>
+<button class="nav-pill text-left rounded-2xl bg-[#f2f8ee] px-4 py-3" onclick="navigateToSection('logs-section', true)">Logs</button>
+</div>
+</div>
+</div>
+
+<main class="max-w-[1520px] mx-auto px-4 pb-8 sm:px-6 space-y-6">
+<section id="overview-section" class="section-card rounded-[32px] overflow-hidden pond-ring">
+<div class="grid gap-6 lg:grid-cols-[1.5fr_1fr] p-5 sm:p-7">
+<div class="space-y-5">
+<div class="flex flex-wrap items-center gap-2">
+<span class="hero-chip rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.25em] text-primary">Frogwatch multi-agent monitoring</span>
+<span class="hero-chip rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.25em] text-[#5e7556]">Sea, road, and air corridors</span>
+</div>
+<div class="max-w-3xl">
+<h2 class="text-3xl sm:text-4xl font-black tracking-tight text-slate-900">A calmer command pond for shipment risk reviews.</h2>
+<p class="mt-3 text-sm sm:text-base text-slate-600 leading-relaxed">The interface now leans into a frog-inspired control tower with softer greens, clearer grouping, cleaner actions, and a more organized flow from intake to analysis to evidence.</p>
+</div>
+<div class="flex flex-wrap gap-3">
+<button onclick="navigateToSection('workspace-section')" class="rounded-2xl frog-gradient px-4 py-3 text-sm font-bold text-white shadow-lg shadow-primary/20">Start Assessment</button>
+<button onclick="exportCurrentReport()" class="rounded-2xl bg-white px-4 py-3 text-sm font-bold text-[#43603f] border border-[#d2e1cb]">Export Current Report</button>
+<button onclick="resetAssessmentForm()" class="rounded-2xl bg-white px-4 py-3 text-sm font-bold text-[#43603f] border border-[#d2e1cb]">Reset Workspace</button>
+</div>
+<div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+<div class="hero-kpi rounded-3xl p-4">
+<p class="text-[10px] font-bold uppercase tracking-[0.28em] text-slate-400">Total Assessments</p>
+<p id="stat-total" class="mt-2 text-3xl font-black text-primary">--</p>
+<p class="mt-1 text-xs text-slate-500">All recorded intelligence runs</p>
+</div>
+<div class="hero-kpi rounded-3xl p-4">
+<p class="text-[10px] font-bold uppercase tracking-[0.28em] text-slate-400">Critical Alerts</p>
+<p id="stat-critical" class="mt-2 text-3xl font-black text-red-600">--</p>
+<p class="mt-1 text-xs text-slate-500">Highest-risk active outcomes</p>
+</div>
+<div class="hero-kpi rounded-3xl p-4">
+<p class="text-[10px] font-bold uppercase tracking-[0.28em] text-slate-400">High Risk</p>
+<p id="stat-high" class="mt-2 text-3xl font-black text-orange-500">--</p>
+<p class="mt-1 text-xs text-slate-500">Routes needing active mitigation</p>
+</div>
+<div class="hero-kpi rounded-3xl p-4">
+<p class="text-[10px] font-bold uppercase tracking-[0.28em] text-slate-400">Average Risk Score</p>
+<p id="stat-avg" class="mt-2 text-3xl font-black text-sky-600">--</p>
+<p class="mt-1 text-xs text-slate-500">Portfolio-wide average score</p>
+</div>
+</div>
+</div>
+<div class="rounded-[28px] pond-panel text-white p-5 sm:p-6 lily-grid">
+<div class="inline-flex items-center gap-2 lily-badge rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.28em] text-[#295b2f]">
+<span class="material-symbols-outlined text-sm">water_lux</span> Frog Ops
+</div>
+<h3 class="mt-3 text-2xl font-black">Organized like a pond-side control room</h3>
+<div class="mt-5 space-y-3 text-sm">
+<div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+<p class="font-bold">1. Ask BRAHMA in plain language</p>
+<p class="mt-1 text-green-50/80">Convert route intent into a structured assessment without leaving the page.</p>
+</div>
+<div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+<p class="font-bold">2. Run a manual scenario</p>
+<p class="mt-1 text-green-50/80">Tune transport mode, route, date, and quantity when the shipment needs analyst control.</p>
+</div>
+<div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+<p class="font-bold">3. Review evidence and export</p>
+<p class="mt-1 text-green-50/80">Jump straight to results, drill into agent evidence, then download the current report as JSON.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="copilot-section" class="section-card rounded-[28px] p-4 sm:p-5">
+<div class="frog-surface rounded-[24px] p-4 flex flex-col gap-3 md:flex-row md:items-center">
+<div class="w-9 h-9 frog-gradient rounded-xl flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-white text-[18px]">psychiatry</span>
+</div>
+<div class="min-w-0 flex-1">
+<p class="text-[10px] font-bold uppercase tracking-[0.28em] text-[#66835f] mb-1">BRAHMA Frogbrain Copilot</p>
+<input id="nl-input" class="frog-input w-full rounded-xl px-4 py-2.5 text-sm transition-all" placeholder='Try: "Assess MV Chennai Star from Khor Fakkan to Rotterdam via Hormuz urgently"' type="text" onkeydown="if(event.key==='Enter')nlAssess()"/>
+</div>
+<button id="nl-btn" onclick="nlAssess()" class="frog-gradient text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:shadow-lg transition-all flex items-center gap-1.5 flex-shrink-0">
 <span class="material-symbols-outlined text-sm">auto_awesome</span> Ask BRAHMA
 </button>
 </div>
 <div id="nl-sync-notif" style="display:none" class="mt-2 text-[10px] text-emerald-600 font-bold bg-emerald-50 px-3 py-1.5 rounded-lg"></div>
+</section>
 
 <!-- CSV Upload Panel -->
-<div id="upload-panel" class="bg-white rounded-xl shadow-sm border border-outline-variant/15 p-5">
+<section id="upload-panel" class="section-card rounded-[28px] p-5">
 <div class="flex items-center justify-between mb-3">
 <div class="flex items-center gap-3">
-<div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center"><span class="material-symbols-outlined text-emerald-700 text-lg">upload_file</span></div>
+<div class="w-8 h-8 bg-[#e4f4dd] rounded-lg flex items-center justify-center"><span class="material-symbols-outlined text-[#2f7d32] text-lg">upload_file</span></div>
 <div>
-<p class="text-xs font-bold text-slate-700">Company Historical Data â€” BRAHMA Calibration</p>
-<p class="text-[10px] text-slate-400">Upload shipment CSV/Excel â†’ BRAHMA learns your patterns</p>
+<p class="text-xs font-bold text-slate-700">Company Historical Data - BRAHMA Calibration</p>
+<p class="text-[10px] text-slate-400">Drop history into the pond so BRAHMA can learn route behavior and anomalies</p>
 </div>
 </div>
 <div id="upload-status-badge" class="hidden"><span class="bg-emerald-100 text-emerald-700 text-[9px] font-bold px-2 py-1 rounded-full flex items-center gap-1"><span class="material-symbols-outlined text-sm">check_circle</span> Data Loaded</span></div>
 </div>
-<div id="upload-dropzone" ondrop="handleDrop(event)" ondragover="event.preventDefault()" class="border-2 border-dashed border-slate-200 rounded-xl p-5 text-center hover:border-emerald-400 hover:bg-emerald-50/30 transition-all cursor-pointer" onclick="document.getElementById('file-input').click()">
+<div id="upload-dropzone" ondrop="handleDrop(event)" ondragover="event.preventDefault()" class="border-2 border-dashed border-[#c9dac0] rounded-[24px] p-6 text-center hover:border-[#75a96b] hover:bg-[#f0f8ea] transition-all cursor-pointer frog-surface" onclick="document.getElementById('file-input').click()">
 <input id="file-input" type="file" accept=".csv,.xlsx,.xls" class="hidden" onchange="handleFileUpload(event)"/>
-<span class="material-symbols-outlined text-3xl text-slate-300 mb-1">table_chart</span>
-<p class="text-xs font-semibold text-slate-500">Drop CSV or Excel file here</p>
+<span class="material-symbols-outlined text-3xl text-[#7aa16d] mb-1">table_chart</span>
+<p class="text-xs font-semibold text-[#456241]">Drop CSV or Excel file here</p>
 <p class="text-[10px] text-slate-400 mt-0.5">Shipment history, delay records, route performance</p>
 </div>
 <div id="upload-progress" style="display:none" class="mt-3 flex items-center gap-3">
@@ -225,50 +419,55 @@
 <div id="upload-results" style="display:none" class="mt-3 space-y-3">
 <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
 <div class="flex items-center justify-between mb-2">
-<p class="text-xs font-bold text-emerald-800">âœ… BRAHMA Analysis Complete</p>
+<p class="text-xs font-bold text-emerald-800">BRAHMA analysis complete</p>
 <span id="ur-records" class="text-[10px] bg-emerald-200 text-emerald-800 px-2 py-0.5 rounded-full font-bold"></span>
 </div>
 <p id="ur-summary" class="text-xs text-slate-600 mb-3"></p>
 <div class="grid grid-cols-3 gap-2 mb-3">
-<div class="bg-white rounded-lg p-2.5 text-center border border-emerald-100"><p class="text-[9px] text-slate-400 uppercase font-bold">Delay Rate</p><p id="ur-delay-rate" class="text-base font-black text-emerald-600">â€”</p></div>
-<div class="bg-white rounded-lg p-2.5 text-center border border-emerald-100"><p class="text-[9px] text-slate-400 uppercase font-bold">Data Quality</p><p id="ur-quality" class="text-base font-black text-blue-600">â€”</p></div>
-<div class="bg-white rounded-lg p-2.5 text-center border border-emerald-100"><p class="text-[9px] text-slate-400 uppercase font-bold">Calibration</p><p id="ur-calibration" class="text-base font-black text-purple-600">â€”</p></div>
+<div class="bg-white rounded-lg p-2.5 text-center border border-emerald-100"><p class="text-[9px] text-slate-400 uppercase font-bold">Delay Rate</p><p id="ur-delay-rate" class="text-base font-black text-emerald-600">--</p></div>
+<div class="bg-white rounded-lg p-2.5 text-center border border-emerald-100"><p class="text-[9px] text-slate-400 uppercase font-bold">Data Quality</p><p id="ur-quality" class="text-base font-black text-blue-600">--</p></div>
+<div class="bg-white rounded-lg p-2.5 text-center border border-emerald-100"><p class="text-[9px] text-slate-400 uppercase font-bold">Calibration</p><p id="ur-calibration" class="text-base font-black text-purple-600">--</p></div>
 </div>
 <div id="ur-insights" class="space-y-1.5"></div>
 </div>
 <div id="ur-routes-container" class="hidden"><p class="text-[10px] font-bold uppercase text-slate-400 mb-1.5">Top Risk Routes</p><div id="ur-routes" class="space-y-1.5"></div></div>
 <div id="ur-seasonal-container" class="hidden"><p class="text-[10px] font-bold uppercase text-slate-400 mb-1.5">Seasonal Patterns</p><div id="ur-seasonal" class="space-y-1.5"></div></div>
 </div>
-</div>
+</section>
 
 <!-- Main Two-Column Layout -->
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<section id="workspace-section" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
 <!-- LEFT COLUMN: New Risk Assessment Panel -->
 <div class="lg:col-span-5 space-y-5">
-<div class="bg-surface-container-lowest rounded-xl shadow-sm border-t-4 border-primary overflow-hidden">
-<div class="p-5 border-b border-surface-container">
+<div class="section-card rounded-[28px] overflow-hidden border-t-4 border-primary">
+<div class="p-5 border-b border-surface-container bg-[linear-gradient(180deg,rgba(240,249,234,0.92),rgba(255,255,255,0.68))]">
+<div class="flex items-start justify-between gap-4">
+<div>
 <h2 class="text-lg font-bold tracking-tight text-on-surface">New Risk Assessment</h2>
-<p class="text-xs text-on-surface-variant">Configure parameters for predictive journey intelligence.</p>
+<p class="text-xs text-on-surface-variant">Configure the route with a cleaner pond-themed workspace.</p>
+</div>
+<span class="frog-tag rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em]">Leap Ready</span>
+</div>
 </div>
 <div class="p-5 space-y-4">
 <div class="grid grid-cols-2 gap-3">
 <div class="col-span-2">
 <label class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Vessel ID / Shipment Ref</label>
-<input id="vessel_id" class="w-full bg-surface-container border-none rounded-lg focus:ring-2 focus:ring-primary/20 transition-all px-3.5 py-2 text-sm" placeholder="e.g. MV-CHENNAI-STAR" type="text" value="MV-CHENNAI-STAR"/>
+<input id="vessel_id" class="frog-input w-full rounded-xl px-3.5 py-2 text-sm transition-all" placeholder="e.g. MV-CHENNAI-STAR" type="text" value="MV-CHENNAI-STAR"/>
 </div>
 <div>
 <label id="origin-label" class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Origin Port</label>
 <div class="relative">
 <span id="origin-icon" class="material-symbols-outlined absolute left-3 top-2 text-primary text-base">sailing</span>
-<input id="origin" list="city-list" autocomplete="off" class="w-full bg-surface-container border-none rounded-lg focus:ring-2 focus:ring-primary/20 transition-all pl-9 pr-3 py-2 text-sm" placeholder="e.g. Khor Fakkan" type="text" value="Khor Fakkan"/>
+<input id="origin" list="city-list" autocomplete="off" class="frog-input w-full rounded-xl transition-all pl-9 pr-3 py-2 text-sm" placeholder="e.g. Khor Fakkan" type="text" value="Khor Fakkan"/>
 </div>
 </div>
 <div>
 <label id="dest-label" class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Destination Port</label>
 <div class="relative">
 <span class="material-symbols-outlined absolute left-3 top-2 text-tertiary text-base">location_on</span>
-<input id="destination" list="city-list" autocomplete="off" class="w-full bg-surface-container border-none rounded-lg focus:ring-2 focus:ring-primary/20 transition-all pl-9 pr-3 py-2 text-sm" placeholder="e.g. Rotterdam" type="text" value="Rotterdam"/>
+<input id="destination" list="city-list" autocomplete="off" class="frog-input w-full rounded-xl transition-all pl-9 pr-3 py-2 text-sm" placeholder="e.g. Rotterdam" type="text" value="Rotterdam"/>
 </div>
 </div>
 <!-- City suggestions datalist -->
@@ -278,7 +477,7 @@
 <!-- Transport Mode Toggle -->
 <div>
 <label class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1.5">Transport Mode</label>
-<div class="grid grid-cols-3 gap-1.5 bg-surface-container p-1 rounded-xl">
+<div class="grid grid-cols-3 gap-1.5 bg-[#edf4e8] p-1 rounded-2xl border border-[#d9e6d1]">
 <button data-mode="sea" class="mode-btn flex items-center justify-center gap-1.5 py-2 rounded-lg bg-primary text-white shadow-sm transition-all text-xs font-semibold">
 <span class="material-symbols-outlined text-sm">sailing</span> Sea
 </button>
@@ -306,11 +505,11 @@
 <div class="grid grid-cols-2 gap-3">
 <div>
 <label class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Departure Date</label>
-<input id="departure_date" class="w-full bg-surface-container border-none rounded-lg focus:ring-2 focus:ring-primary/20 transition-all px-3.5 py-2 text-sm" type="date" value="2026-04-20"/>
+<input id="departure_date" class="frog-input w-full rounded-xl transition-all px-3.5 py-2 text-sm" type="date" value="2026-04-20"/>
 </div>
 <div>
 <label class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Quantity</label>
-<input id="quantity" class="w-full bg-surface-container border-none rounded-lg focus:ring-2 focus:ring-primary/20 transition-all px-3.5 py-2 text-sm" placeholder="8400" type="number" value="8400"/>
+<input id="quantity" class="frog-input w-full rounded-xl transition-all px-3.5 py-2 text-sm" placeholder="8400" type="number" value="8400"/>
 </div>
 </div>
 
@@ -327,34 +526,34 @@
 <div>
 <label class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1.5">Quick Scenarios</label>
 <div class="grid grid-cols-3 gap-1.5">
-<button id="sc-hormuz" onclick="loadScenario('hormuz')" class="scenario-btn p-2.5 text-left border border-outline-variant/20 rounded-xl hover:border-primary/40 hover:bg-primary/5 transition-all">
-<span class="block text-[11px] font-bold text-on-surface leading-tight">ðŸ”´ Hormuz</span>
-<span class="text-[9px] text-on-surface-variant">Sea Â· Crisis</span>
+<button id="sc-hormuz" onclick="loadScenario('hormuz')" class="scenario-btn frog-surface p-2.5 text-left border border-outline-variant/20 rounded-xl hover:border-primary/40 hover:bg-primary/5 transition-all">
+<span class="block text-[11px] font-bold text-on-surface leading-tight">High-Risk Hormuz</span>
+<span class="text-[9px] text-on-surface-variant">Sea | Crisis</span>
 </button>
-<button id="sc-chennai" onclick="loadScenario('chennai')" class="scenario-btn p-2.5 text-left border border-outline-variant/20 rounded-xl hover:border-primary/40 hover:bg-primary/5 transition-all">
-<span class="block text-[11px] font-bold text-on-surface leading-tight">ðŸŸ¡ Chennaiâ†’SG</span>
-<span class="text-[9px] text-on-surface-variant">Sea Â· Monsoon</span>
+<button id="sc-chennai" onclick="loadScenario('chennai')" class="scenario-btn frog-surface p-2.5 text-left border border-outline-variant/20 rounded-xl hover:border-primary/40 hover:bg-primary/5 transition-all">
+<span class="block text-[11px] font-bold text-on-surface leading-tight">Chennai -> Singapore</span>
+<span class="text-[9px] text-on-surface-variant">Sea | Monsoon</span>
 </button>
-<button id="sc-mumbai" onclick="loadScenario('mumbai')" class="scenario-btn p-2.5 text-left border border-outline-variant/20 rounded-xl hover:border-primary/40 hover:bg-primary/5 transition-all">
-<span class="block text-[11px] font-bold text-on-surface leading-tight">ðŸŸ¢ Mumbaiâ†’DXB</span>
-<span class="text-[9px] text-on-surface-variant">Sea Â· Arabian</span>
+<button id="sc-mumbai" onclick="loadScenario('mumbai')" class="scenario-btn frog-surface p-2.5 text-left border border-outline-variant/20 rounded-xl hover:border-primary/40 hover:bg-primary/5 transition-all">
+<span class="block text-[11px] font-bold text-on-surface leading-tight">Mumbai -> Dubai</span>
+<span class="text-[9px] text-on-surface-variant">Sea | Arabian</span>
 </button>
-<button id="sc-shanghai" onclick="loadScenario('shanghai')" class="scenario-btn p-2.5 text-left border border-outline-variant/20 rounded-xl hover:border-primary/40 hover:bg-primary/5 transition-all">
-<span class="block text-[11px] font-bold text-on-surface leading-tight">ðŸŸ  Shanghaiâ†’LA</span>
-<span class="text-[9px] text-on-surface-variant">Sea Â· Peak</span>
+<button id="sc-shanghai" onclick="loadScenario('shanghai')" class="scenario-btn frog-surface p-2.5 text-left border border-outline-variant/20 rounded-xl hover:border-primary/40 hover:bg-primary/5 transition-all">
+<span class="block text-[11px] font-bold text-on-surface leading-tight">Shanghai -> Los Angeles</span>
+<span class="text-[9px] text-on-surface-variant">Sea | Peak</span>
 </button>
-<button id="sc-delhi_road" onclick="loadScenario('delhi_road')" class="scenario-btn p-2.5 text-left border border-outline-variant/20 rounded-xl hover:border-purple-400/40 hover:bg-purple-50 transition-all">
-<span class="block text-[11px] font-bold text-on-surface leading-tight">ðŸšš Delhiâ†’Mum</span>
-<span class="text-[9px] text-on-surface-variant">Road Â· Monsoon</span>
+<button id="sc-delhi_road" onclick="loadScenario('delhi_road')" class="scenario-btn frog-surface p-2.5 text-left border border-outline-variant/20 rounded-xl hover:border-purple-400/40 hover:bg-purple-50 transition-all">
+<span class="block text-[11px] font-bold text-on-surface leading-tight">Delhi -> Mumbai</span>
+<span class="text-[9px] text-on-surface-variant">Road | Monsoon</span>
 </button>
-<button id="sc-delhi_air" onclick="loadScenario('delhi_air')" class="scenario-btn p-2.5 text-left border border-outline-variant/20 rounded-xl hover:border-cyan-400/40 hover:bg-cyan-50 transition-all">
-<span class="block text-[11px] font-bold text-on-surface leading-tight">âœˆï¸ Delhiâ†’DXB</span>
-<span class="text-[9px] text-on-surface-variant">Air Â· Winter Fog</span>
+<button id="sc-delhi_air" onclick="loadScenario('delhi_air')" class="scenario-btn frog-surface p-2.5 text-left border border-outline-variant/20 rounded-xl hover:border-cyan-400/40 hover:bg-cyan-50 transition-all">
+<span class="block text-[11px] font-bold text-on-surface leading-tight">Delhi -> Dubai</span>
+<span class="text-[9px] text-on-surface-variant">Air | Winter Fog</span>
 </button>
 </div>
 </div>
 
-<button id="assess-btn" onclick="assessRisk()" class="w-full bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3.5 rounded-xl shadow-lg hover:shadow-primary/20 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2.5 mt-4">
+<button id="assess-btn" onclick="assessRisk()" class="w-full frog-gradient text-white font-bold py-3.5 rounded-2xl shadow-lg hover:shadow-primary/20 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2.5 mt-4">
 <span>ASSESS RISK</span>
 <span class="material-symbols-outlined text-lg">bolt</span>
 </button>
@@ -363,17 +562,28 @@
 </div>
 
 <!-- RIGHT COLUMN: Results Panel -->
-<div class="lg:col-span-7">
-<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden min-h-[580px] flex flex-col relative">
+<div id="results-section" class="lg:col-span-7">
+<div class="section-card rounded-[28px] overflow-hidden min-h-[580px] flex flex-col relative">
+<div class="px-6 py-4 border-b border-[#dbe7d3] bg-[linear-gradient(180deg,rgba(242,249,237,0.95),rgba(255,255,255,0.76))]">
+<div class="flex flex-wrap items-center justify-between gap-3">
+<div>
+<p class="text-[10px] font-bold uppercase tracking-[0.3em] text-[#66835f]">Results Pond</p>
+<h3 class="text-lg font-black text-slate-900">Assessment outcome and agent evidence</h3>
+</div>
+<span class="frog-tag rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.24em]">Live Analysis</span>
+</div>
+</div>
 
 <!-- Empty state -->
 <div id="empty-panel" class="panel-fade visible-panel flex flex-col items-center justify-center py-20 text-center flex-grow">
-<span class="material-symbols-outlined text-5xl text-slate-200 mb-3">sailing</span>
-<p class="text-slate-500 font-semibold text-sm">Enter shipment details and click Assess Risk</p>
-<p class="text-slate-400 text-xs mt-1.5">Supports ðŸš¢ Sea Â· ðŸšš Road Â· âœˆï¸ Air transport modes</p>
+<div class="w-20 h-20 rounded-full bg-[radial-gradient(circle_at_30%_30%,#d8f4cf,#9ad184)] flex items-center justify-center shadow-inner mb-4">
+<span class="material-symbols-outlined text-4xl text-[#2c6330]">pets</span>
+</div>
+<p class="text-slate-600 font-semibold text-sm">Enter shipment details and let SANJAYA take the next leap.</p>
+<p class="text-slate-400 text-xs mt-1.5">Results, agent evidence, and mitigation paths will appear here.</p>
 </div>
 
-<!-- Loading state â€” Live Computation Feed -->
+<!-- Loading state - Live Computation Feed -->
 <div id="loading-panel" class="panel-fade hidden-panel flex-grow">
 <div class="bg-white rounded-xl border border-slate-200 p-6 m-4">
   <div class="flex items-center gap-3 mb-5">
@@ -396,7 +606,7 @@
 <div class="bg-red-50 border-2 border-red-200 rounded-xl p-6 text-center">
 <span class="material-symbols-outlined text-red-500 text-5xl mb-3">gpp_bad</span>
 <h3 class="text-lg font-black text-red-800 mb-1">ASSESSMENT BLOCKED</h3>
-<p class="text-xs text-red-600 mb-1">KAVACH Validation Agent Â· Input Guard</p>
+<p class="text-xs text-red-600 mb-1">KAVACH Validation Agent | Input Guard</p>
 <p id="blocked-engine" class="text-[9px] text-red-400 mb-4"></p>
 <div id="blocked-errors" class="text-left space-y-2 mb-4"></div>
 <div id="blocked-suggestions" class="text-left space-y-1 mb-4"></div>
@@ -422,7 +632,7 @@
 <div id="agent-evidence-section" style="display:none" class="border-t border-slate-100 px-8 py-6">
 <div class="flex items-center gap-2 mb-5">
 <span class="material-symbols-outlined text-blue-600 text-lg">hub</span>
-<h4 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Agent Evidence â€” Why Each Score Was Given</h4>
+<h4 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Agent Evidence - Why Each Score Was Given</h4>
 </div>
 <div id="agent-evidence-grid" class="space-y-4"></div>
 </div>
@@ -440,7 +650,7 @@
 </div>
 <div id="computation-steps" class="space-y-2.5 mb-4"></div>
 <div class="bg-slate-900 rounded-xl p-4 font-mono text-xs">
-<p class="text-slate-400 text-[9px] uppercase mb-2">â–¶ FINAL COMPOSITE FORMULA (Non-Linear)</p>
+<p class="text-slate-400 text-[9px] uppercase mb-2">Final Composite Formula (Non-Linear)</p>
 <div id="formula-display" class="space-y-1"></div>
 </div>
 </div>
@@ -449,7 +659,7 @@
 <div id="bedrock-panel" style="display:none" class="border-t border-slate-100 px-6 py-5">
 <div class="flex items-center gap-2 mb-4">
 <div class="w-7 h-7 bg-gradient-to-br from-purple-600 to-indigo-700 rounded-lg flex items-center justify-center"><span class="text-white font-black text-xs">B</span></div>
-<div><h4 class="text-xs font-black text-slate-800">BRAHMA Deep Analysis</h4><p class="text-[9px] text-slate-400">AWS Bedrock Â· Claude Intelligence</p></div>
+<div><h4 class="text-xs font-black text-slate-800">BRAHMA Deep Analysis</h4><p class="text-[9px] text-slate-400">AWS Bedrock | Claude Intelligence</p></div>
 </div>
 <!-- Executive Summary -->
 <div class="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-100 rounded-xl p-4 mb-4">
@@ -462,7 +672,7 @@
 </div>
 <!-- Math Terminal -->
 <div class="bg-slate-900 rounded-xl p-4 mb-4 font-mono">
-<p class="text-slate-400 text-[9px] uppercase mb-2">â–¶ MATHEMATICAL VALIDATION</p>
+<p class="text-slate-400 text-[9px] uppercase mb-2">Mathematical Validation</p>
 <div id="brahma-math" class="text-xs"></div>
 </div>
 <!-- Agent Insights -->
@@ -495,16 +705,16 @@
 
 </div>
 </div>
-</div>
+</section>
 
 <!-- History Table -->
-<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
-<div class="p-5 border-b border-surface-container flex justify-between items-center">
+<section id="logs-section" class="section-card rounded-[28px] overflow-hidden">
+<div class="p-5 border-b border-surface-container flex justify-between items-center bg-[linear-gradient(180deg,rgba(242,249,237,0.95),rgba(255,255,255,0.76))]">
 <div>
 <h2 class="text-base font-bold tracking-tight text-on-surface">Recent Intelligence Logs</h2>
-<p class="text-[10px] text-on-surface-variant">Real-time history of shipment audits and risk triggers.</p>
+<p class="text-[10px] text-on-surface-variant">A cleaner event stream for recent audits, alerts, and route decisions.</p>
 </div>
-<button onclick="loadHistory()" class="bg-surface-container px-3 py-1.5 rounded-lg text-[10px] font-bold hover:bg-surface-container-high transition-colors flex items-center gap-1.5">
+<button onclick="loadHistory()" class="bg-[#edf4e8] px-3 py-1.5 rounded-lg text-[10px] font-bold hover:bg-[#e2eddc] transition-colors flex items-center gap-1.5 text-[#446040] border border-[#d8e5d0]">
 <span class="material-symbols-outlined text-sm">refresh</span> Refresh
 </button>
 </div>
@@ -526,11 +736,11 @@
 </tbody>
 </table>
 </div>
-</div>
+</section>
 </main>
 
 <!-- Chat FAB -->
-<button onclick="toggleChat()" class="fixed bottom-6 right-6 w-12 h-12 bg-gradient-to-br from-purple-600 to-indigo-700 rounded-full shadow-xl flex items-center justify-center hover:scale-110 transition-transform z-50">
+<button onclick="toggleChat()" class="floating-action fixed bottom-6 right-6 w-12 h-12 frog-gradient rounded-full shadow-xl flex items-center justify-center hover:scale-110 transition-transform z-50">
 <span class="material-symbols-outlined text-white text-xl">smart_toy</span>
 </button>
 <div id="chat-panel" style="display:none" class="fixed bottom-20 right-6 w-80 bg-white rounded-xl shadow-2xl border border-outline-variant/20 z-50 overflow-hidden">
@@ -545,16 +755,197 @@
 </div>
 </div>
 
-</div><!-- end lg:ml-[72px] wrapper -->
+</div>
 
 <script>
 // ── CONFIG ──────────────────────────────────────────
-const API = "http://16.112.128.251:8000";
+let API = "";
+let apiResolvePromise = null;
+const API_CANDIDATES = (function() {
+  var bases = [];
+  if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+    bases.push(window.location.origin);
+  }
+  bases.push('http://127.0.0.1:8000');
+  bases.push('http://localhost:8000');
+  bases.push('http://16.112.128.251:8000');
+  return bases.filter(function(base, index, arr) { return arr.indexOf(base) === index; });
+})();
+
+async function fetchWithTimeout(url, options, timeoutMs) {
+  var controller = new AbortController();
+  var timer = setTimeout(function() { controller.abort(); }, timeoutMs || 4000);
+  try {
+    var finalOptions = options ? Object.assign({}, options) : {};
+    finalOptions.signal = controller.signal;
+    return await fetch(url, finalOptions);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function setApiStatus(text, className) {
+  var el = document.getElementById('api-status');
+  if (!el) return;
+  el.textContent = text;
+  if (className) el.className = className;
+}
+
+async function resolveAPIBase() {
+  if (API) return API;
+  if (apiResolvePromise) return apiResolvePromise;
+
+  apiResolvePromise = (async function() {
+    setApiStatus('Checking API...', 'text-[9px] font-bold text-amber-700 uppercase');
+    for (var i = 0; i < API_CANDIDATES.length; i++) {
+      var candidate = API_CANDIDATES[i];
+      try {
+        var res = await fetchWithTimeout(candidate + '/health', {}, 2500);
+        if (res.ok) {
+          API = candidate;
+          setApiStatus('● Connected', 'text-[9px] font-bold text-green-700 uppercase');
+          return API;
+        }
+      } catch (e) {}
+    }
+    throw new Error('API unavailable. Start the backend on http://127.0.0.1:8000 or open the dashboard from the FastAPI server.');
+  })();
+
+  try {
+    return await apiResolvePromise;
+  } finally {
+    apiResolvePromise = null;
+  }
+}
+
+async function ensureAPIReady() {
+  if (API) return API;
+  return await resolveAPIBase();
+}
 
 // â”€â”€ STATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let selectedMode = "sea";
 let currentResult = null;
 let activeScenario = null;
+
+const NAV_SECTIONS = ['overview-section', 'copilot-section', 'workspace-section', 'results-section', 'logs-section'];
+
+function toggleMobileMenu(forceOpen) {
+  var menu = document.getElementById('mobile-menu');
+  if (!menu) return;
+  var shouldOpen = typeof forceOpen === 'boolean' ? forceOpen : menu.classList.contains('hidden');
+  if (shouldOpen) {
+    menu.classList.remove('hidden');
+  } else {
+    menu.classList.add('hidden');
+  }
+}
+
+function setActiveNav(targetId) {
+  document.querySelectorAll('[data-nav-target]').forEach(function(el) {
+    var isActive = el.getAttribute('data-nav-target') === targetId;
+    el.classList.toggle('active-nav', isActive);
+    if (el.classList.contains('text-slate-400')) el.classList.toggle('text-primary', isActive);
+    if (el.classList.contains('text-slate-500')) el.classList.toggle('text-primary', isActive);
+    if (!isActive) {
+      if (el.classList.contains('rounded-full')) {
+        el.classList.add('text-slate-500');
+        el.classList.remove('text-primary');
+      } else {
+        el.classList.add('text-slate-400');
+        el.classList.remove('text-primary');
+      }
+    }
+  });
+}
+
+function navigateToSection(sectionId, closeMenu) {
+  var el = document.getElementById(sectionId);
+  if (el) {
+    el.scrollIntoView({behavior: 'smooth', block: 'start'});
+    setActiveNav(sectionId);
+  }
+  if (closeMenu) toggleMobileMenu(false);
+}
+
+function updateActiveNavOnScroll() {
+  var current = NAV_SECTIONS[0];
+  for (var i = 0; i < NAV_SECTIONS.length; i++) {
+    var section = document.getElementById(NAV_SECTIONS[i]);
+    if (!section) continue;
+    var rect = section.getBoundingClientRect();
+    if (rect.top <= 160 && rect.bottom >= 180) {
+      current = NAV_SECTIONS[i];
+      break;
+    }
+  }
+  setActiveNav(current);
+}
+
+function resetAssessmentForm() {
+  activeScenario = null;
+  currentResult = null;
+  document.querySelectorAll('.scenario-btn').forEach(function(b) { b.classList.remove('scenario-active'); });
+  setValue('vessel_id', 'MV-CHENNAI-STAR');
+  setValue('origin', 'Khor Fakkan');
+  setValue('destination', 'Rotterdam');
+  setValue('departure_date', '2026-04-20');
+  setValue('quantity', '8400');
+  setValue('days_real', '5');
+  setValue('days_scheduled', '3');
+  setValue('benefit_per_order', '50');
+  setValue('sales_per_customer', '200');
+  setValue('month', '4');
+  setValue('shipping_mode_encoded', '0');
+  setValue('hs_code', '8471');
+  selectedMode = 'sea';
+  updateLabelsForMode(selectedMode);
+  updateCityList(selectedMode);
+  document.getElementById('origin-icon').textContent = 'sailing';
+  document.querySelectorAll('.mode-btn').forEach(function(btn) {
+    btn.classList.remove('bg-primary','bg-purple-600','bg-cyan-600','text-white','shadow-sm');
+    btn.classList.add('text-on-surface-variant');
+    if (btn.dataset.mode === 'sea') {
+      btn.classList.remove('text-on-surface-variant');
+      btn.classList.add('bg-primary','text-white','shadow-sm');
+    }
+  });
+  hideMismatch();
+  showPanel('empty-panel');
+  setHTML('res-header', '');
+  setHTML('res-agents', '');
+  setHTML('res-overrides', '');
+  setHTML('res-rerouting', '');
+  setHTML('agent-evidence-grid', '');
+  document.getElementById('evidence-cards').style.display = 'none';
+  document.getElementById('agent-evidence-section').style.display = 'none';
+  document.getElementById('bedrock-panel').style.display = 'none';
+  document.getElementById('computation-panel').style.display = 'none';
+  document.getElementById('nl-input').value = '';
+  navigateToSection('workspace-section');
+}
+
+function exportCurrentReport() {
+  if (!currentResult) {
+    alert('Run an assessment first so there is a report to export.');
+    return;
+  }
+  var payload = {
+    exported_at: new Date().toISOString(),
+    scenario: activeScenario,
+    transport_mode: selectedMode,
+    report: currentResult
+  };
+  var blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
+  var url = URL.createObjectURL(blob);
+  var link = document.createElement('a');
+  link.href = url;
+  link.download = 'sanjaya-report-' + new Date().toISOString().replace(/[:.]/g, '-') + '.json';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
 
 // â”€â”€ VESSEL ID PREFIX â†’ MODE MAPPING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Prefixes that strongly imply a specific transport mode
@@ -586,7 +977,7 @@ function detectModeFromVesselId(vid) {
 }
 
 function getModeLabel(mode) {
-  return {sea:'Sea Freight ðŸš¢', road:'Road Transport ðŸšš', air:'Air Freight âœˆï¸'}[mode] || mode;
+  return {sea:'Sea Freight', road:'Road Transport', air:'Air Freight'}[mode] || mode;
 }
 
 // â”€â”€ TRANSPORT MODE VALIDATION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -863,10 +1254,14 @@ async function assessRisk() {
     departure_date: getValue('departure_date', new Date().toISOString().split('T')[0])
   };
   try {
+    await ensureAPIReady();
     var res = await fetch(API + '/predict/enhanced', {
       method: 'POST', headers: {'Content-Type':'application/json'},
       body: JSON.stringify(payload)
     });
+    if (!res.ok && res.status !== 422) {
+      throw new Error('API request failed with status ' + res.status);
+    }
     if (res.status === 422) {
       var blocked = await res.json();
       showLoadingState(false); showPanel('blocked-panel');
@@ -889,6 +1284,7 @@ async function assessRisk() {
     renderResult(data);
     renderAgentEvidence(data);
     if (data.bedrock_analysis) renderBedrockAnalysis(data);
+    navigateToSection('results-section');
     loadStats(); loadHistory();
   } catch(e) {
     showLoadingState(false); showPanel('empty-panel');
@@ -1072,24 +1468,26 @@ function renderResult(data) {
 // â”€â”€ STATS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function loadStats() {
   try {
+    await ensureAPIReady();
     var res = await fetch(API + '/stats');
+    if (!res.ok) throw new Error('Stats unavailable');
     var d = await res.json();
     setText('stat-total',    d.total_assessments || 0);
     setText('stat-critical', d.critical_count || 0);
     setText('stat-high',     d.high_count || d.medium_count || 0);
     setText('stat-avg',      d.avg_risk_score ? Number(d.avg_risk_score).toFixed(1) : '0');
-    var el = document.getElementById('api-status');
-    if (el) { el.textContent = '\u25CF Connected'; el.className = 'text-[9px] font-bold text-green-700 uppercase'; }
+    setApiStatus('\u25CF Connected', 'text-[9px] font-bold text-green-700 uppercase');
   } catch(e) {
-    var el = document.getElementById('api-status');
-    if (el) { el.textContent = '\u2717 Offline'; el.className = 'text-[9px] font-bold text-red-600 uppercase'; }
+    setApiStatus('\u2717 Offline', 'text-[9px] font-bold text-red-600 uppercase');
   }
 }
 
 // â”€â”€ HISTORY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function loadHistory() {
   try {
+    await ensureAPIReady();
     var res = await fetch(API + '/history');
+    if (!res.ok) throw new Error('History unavailable');
     var d = await res.json();
     var tbody = document.getElementById('history-tbody');
     if (!tbody) return;
@@ -1128,13 +1526,13 @@ function setText(id, val) { var el = document.getElementById(id); if (el) el.tex
 // â”€â”€ HEALTH CHECK â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function checkHealth() {
   try {
+    await ensureAPIReady();
     var res = await fetch(API + '/health');
     var d = await res.json();
-    var el = document.getElementById('api-status');
-    if (el) el.textContent = d.status === 'ok' ? '\u25CF Connected' : '\u2717 Error';
+    setApiStatus(d.status === 'ok' ? '\u25CF Connected' : '\u2717 Error',
+      d.status === 'ok' ? 'text-[9px] font-bold text-green-700 uppercase' : 'text-[9px] font-bold text-red-600 uppercase');
   } catch(e) {
-    var el = document.getElementById('api-status');
-    if (el) { el.textContent = '\u2717 Offline'; el.className = 'text-[9px] font-bold text-red-600 uppercase'; }
+    setApiStatus('\u2717 Offline', 'text-[9px] font-bold text-red-600 uppercase');
   }
 }
 
@@ -1152,6 +1550,8 @@ document.getElementById('vessel_id').addEventListener('input', function() {
 checkHealth();
 loadStats();
 loadHistory();
+updateActiveNavOnScroll();
+window.addEventListener('scroll', updateActiveNavOnScroll, {passive:true});
 setInterval(loadStats, 30000);
 setInterval(loadHistory, 60000);
 
@@ -1554,7 +1954,9 @@ async function nlAssess() {
     setTimeout(function(){completeStep(s.id,null,s.label);},s.delay+500);
   });
   try {
+    await ensureAPIReady();
     var res = await fetch(API+'/nlpredict',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:text})});
+    if (!res.ok) throw new Error('BRAHMA request failed with status ' + res.status);
     var data = await res.json();
     if (data.error) { showLoadingState(false); showPanel('empty-panel'); alert(data.error); return; }
     updateProgress(100,'Assessment complete!');
@@ -1574,6 +1976,7 @@ async function nlAssess() {
     renderResult(data);
     renderAgentEvidence(data);
     if (data.bedrock_analysis) renderBedrockAnalysis(data);
+    navigateToSection('results-section');
     loadStats(); loadHistory();
   } catch(e) {
     showLoadingState(false); showPanel('empty-panel');
@@ -1595,7 +1998,9 @@ async function sendChat() {
     +'<div id="chat-loading" class="bg-white rounded-xl px-3 py-2 text-xs text-slate-400">BRAHMA thinking...</div>';
   input.value=''; msgs.scrollTop=msgs.scrollHeight;
   try {
+    await ensureAPIReady();
     var res=await fetch(API+'/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:msg})});
+    if (!res.ok) throw new Error('Chat unavailable');
     var data=await res.json();
     var cl=document.getElementById('chat-loading');if(cl)cl.remove();
     msgs.innerHTML+='<div class="bg-purple-50 border border-purple-100 rounded-xl px-3 py-2 text-xs text-slate-700">'+data.response+'</div>';
@@ -1608,7 +2013,7 @@ async function sendChat() {
 
 // â”€â”€ COMPANY HISTORY CHECK â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function checkCompanyHistory(){
-  try{var res=await fetch(API+'/company/history');var data=await res.json();
+  try{await ensureAPIReady(); var res=await fetch(API+'/company/history'); if(!res.ok) throw new Error('Company history unavailable'); var data=await res.json();
     if(data.loaded){document.getElementById('upload-status-badge').classList.remove('hidden');
       renderUploadResults(data.analysis,data.filename||'Previous upload');}
   }catch(e){}

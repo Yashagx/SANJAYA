@@ -10,3 +10,11 @@ requests
 python-dotenv
 langchain
 langgraph
+psycopg2-binary
+sqlalchemy
+python-multipart
+openai
+pyjwt
+cryptography
+passlib[bcrypt]
+python-jose[cryptography]

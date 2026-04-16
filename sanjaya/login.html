@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SANJAYA — Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-container {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo h1 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        button {
+            flex: 1;
+            padding: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-login {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-login:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-register {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-register:hover {
+            background: #f5f5f5;
+        }
+
+        .error {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab {
+            padding: 0.75rem 1rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #999;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        .password-strength {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            display: none;
+        }
+
+        .strength-weak {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+
+        .strength-medium {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .strength-strong {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .requirements {
+            font-size: 0.85rem;
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+            background: #f5f5f5;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .requirement {
+            margin: 0.25rem 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .requirement::before {
+            content: "✗ ";
+            color: #d32f2f;
+            margin-right: 0.5rem;
+        }
+
+        .requirement.met::before {
+            content: "✓ ";
+            color: #388e3c;
+        }
+
+        .requirement.met {
+            color: #388e3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>🚢 SANJAYA</h1>
+            <p>Shipment Risk Intelligence Platform</p>
+        </div>
+
+        <div class="success" id="successMsg"></div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('login')">Login</button>
+            <button class="tab" onclick="switchTab('register')">Register</button>
+        </div>
+
+        <!-- LOGIN FORM -->
+        <div id="login-form" class="form-section active">
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="login-email">Email Address</label>
+                    <input type="email" id="login-email" name="email" required>
+                    <div class="error" id="login-email-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" name="password" required>
+                    <div class="error" id="login-password-error"></div>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn-login">Login</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- REGISTER FORM -->
+        <div id="register-form" class="form-section">
+            <form onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label for="register-email">Email Address</label>
+                    <input type="email" id="register-email" name="email" required>
+                    <div class="error" id="register-email-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" name="password" required oninput="checkPasswordStrength()">
+                    <div class="error" id="register-password-error"></div>
+                    <div class="password-strength" id="password-strength"></div>
+                    <div class="requirements" id="password-requirements">
+                        <div class="requirement" id="req-length">At least 8 characters</div>
+                        <div class="requirement" id="req-upper">At least one uppercase letter</div>
+                        <div class="requirement" id="req-digit">At least one digit</div>
+                        <div class="requirement" id="req-special">At least one special character</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="register-confirm">Confirm Password</label>
+                    <input type="password" id="register-confirm" name="confirm" required>
+                    <div class="error" id="register-confirm-error"></div>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn-login">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tab) {
+            // Hide all forms
+            document.getElementById('login-form').classList.remove('active');
+            document.getElementById('register-form').classList.remove('active');
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            
+            // Show selected form
+            if (tab === 'login') {
+                document.getElementById('login-form').classList.add('active');
+                document.querySelectorAll('.tab')[0].classList.add('active');
+            } else {
+                document.getElementById('register-form').classList.add('active');
+                document.querySelectorAll('.tab')[1].classList.add('active');
+            }
+        }
+
+        function clearErrors() {
+            document.querySelectorAll('.error').forEach(el => {
+                el.textContent = '';
+                el.style.display = 'none';
+            });
+        }
+
+        function showError(elementId, message) {
+            const el = document.getElementById(elementId);
+            el.textContent = message;
+            el.style.display = 'block';
+        }
+
+        function checkPasswordStrength() {
+            const password = document.getElementById('register-password').value;
+            const strengthEl = document.getElementById('password-strength');
+            const reqEl = document.getElementById('password-requirements');
+            
+            if (!password) {
+                strengthEl.style.display = 'none';
+                reqEl.style.display = 'none';
+                return;
+            }
+
+            reqEl.style.display = 'block';
+            strengthEl.style.display = 'block';
+
+            // Check requirements
+            const hasLength = password.length >= 8;
+            const hasUpper = /[A-Z]/.test(password);
+            const hasDigit = /[0-9]/.test(password);
+            const hasSpecial = /[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(password);
+
+            updateRequirement('req-length', hasLength);
+            updateRequirement('req-upper', hasUpper);
+            updateRequirement('req-digit', hasDigit);
+            updateRequirement('req-special', hasSpecial);
+
+            // Determine strength
+            const score = [hasLength, hasUpper, hasDigit, hasSpecial].filter(Boolean).length;
+            
+            strengthEl.classList.remove('strength-weak', 'strength-medium', 'strength-strong');
+            
+            if (score <= 1) {
+                strengthEl.textContent = 'Weak password';
+                strengthEl.classList.add('strength-weak');
+            } else if (score <= 2) {
+                strengthEl.textContent = 'Medium strength';
+                strengthEl.classList.add('strength-medium');
+            } else if (score >= 3) {
+                strengthEl.textContent = 'Strong password';
+                strengthEl.classList.add('strength-strong');
+            }
+        }
+
+        function updateRequirement(id, met) {
+            const el = document.getElementById(id);
+            if (met) {
+                el.classList.add('met');
+            } else {
+                el.classList.remove('met');
+            }
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            clearErrors();
+
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            try {
+                const response = await fetch('/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Store token
+                    localStorage.setItem('token', data.access_token);
+                    localStorage.setItem('user_email', data.user_email);
+                    
+                    // Show success and redirect
+                    showSuccess(`Welcome, ${data.user_email}!`);
+                    setTimeout(() => {
+                        window.location.href = '/dashboard';
+                    }, 1500);
+                } else {
+                    showError('login-password-error', data.detail || 'Login failed');
+                }
+            } catch (error) {
+                showError('login-password-error', 'Connection error: ' + error.message);
+            }
+        }
+
+        async function handleRegister(event) {
+            event.preventDefault();
+            clearErrors();
+
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const confirm = document.getElementById('register-confirm').value;
+
+            // Client-side validation
+            if (password !== confirm) {
+                showError('register-confirm-error', 'Passwords do not match');
+                return;
+            }
+
+            if (password.length < 8) {
+                showError('register-password-error', 'Password must be at least 8 characters');
+                return;
+            }
+
+            try {
+                const response = await fetch('/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showSuccess('Registration successful! Please login.');
+                    setTimeout(() => {
+                        switchTab('login');
+                        document.getElementById('login-email').value = email;
+                        document.getElementById('register-email').value = '';
+                        document.getElementById('register-password').value = '';
+                        document.getElementById('register-confirm').value = '';
+                    }, 1500);
+                } else {
+                    showError('register-email-error', data.detail || 'Registration failed');
+                }
+            } catch (error) {
+                showError('register-email-error', 'Connection error: ' + error.message);
+            }
+        }
+
+        function showSuccess(message) {
+            const el = document.getElementById('successMsg');
+            el.textContent = message;
+            el.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+# Observability Stack Configuration - Docker Compose
+# Includes: Loki, Prometheus, Grafana, Jaeger (for distributed tracing)
+
+version: '3.8'
+
+services:
+  # ────────────────────────────────────────────────────────────
+  # Loki - Log Aggregator
+  # ────────────────────────────────────────────────────────────
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: sanjaya-loki
+    ports:
+      - "3100:3100"
+    environment:
+      - LOG_LEVEL=info
+    volumes:
+      - ./docker/loki-config.yml:/etc/loki/local-config.yaml
+      - loki_data:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - sanjaya-network
+
+  # ────────────────────────────────────────────────────────────
+  # Prometheus - Metrics Scraper
+  # ────────────────────────────────────────────────────────────
+  prometheus:
+    image: prom/prometheus:v2.45.0
+    container_name: sanjaya-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    networks:
+      - sanjaya-network
+
+  # ────────────────────────────────────────────────────────────
+  # Grafana - Visualization & Dashboards
+  # ────────────────────────────────────────────────────────────
+  grafana:
+    image: grafana/grafana:10.0.0
+    container_name: sanjaya-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - ./docker/grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yaml
+      - ./docker/grafana-dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yaml
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - loki
+      - prometheus
+    networks:
+      - sanjaya-network
+
+  # ────────────────────────────────────────────────────────────
+  # Jaeger - Distributed Tracing
+  # ────────────────────────────────────────────────────────────
+  jaeger:
+    image: jaegertracing/all-in-one:1.40.0
+    container_name: sanjaya-jaeger
+    ports:
+      - "16686:16686"    # Jaeger UI
+      - "6831:6831/udp"  # Jaeger agent
+    environment:
+      - COLLECTOR_ZIPKIN_HTTP_PORT=9411
+    networks:
+      - sanjaya-network
+
+  # ────────────────────────────────────────────────────────────
+  # Elasticsearch - Log Storage (Alternative to Loki)
+  # ────────────────────────────────────────────────────────────
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.8.0
+    container_name: sanjaya-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - sanjaya-network
+
+  # ────────────────────────────────────────────────────────────
+  # Kibana - Elasticsearch UI
+  # ────────────────────────────────────────────────────────────
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.8.0
+    container_name: sanjaya-kibana
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    networks:
+      - sanjaya-network
+
+volumes:
+  loki_data:
+  prometheus_data:
+  grafana_data:
+  elasticsearch_data:
+
+networks:
+  sanjaya-network:
+    driver: bridge
