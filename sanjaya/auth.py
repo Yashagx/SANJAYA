@@ -10,8 +10,7 @@ from typing import Optional
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel, EmailStr
-from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthCredentials
+from fastapi import Depends, HTTPException, status, Header
 from sqlalchemy import create_engine, Column, String, DateTime, Integer, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -33,9 +32,6 @@ DATABASE_URL = os.getenv(
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
-
-# ── Security schemes ────────────────────────────────────────────────────
-security = HTTPBearer()
 
 
 # ── Models ──────────────────────────────────────────────────────────────
@@ -186,9 +182,16 @@ def update_last_login(email: str):
 
 
 # ── Authentication dependency ──────────────────────────────────────────
-async def get_current_user(credentials: HTTPAuthCredentials = Depends(security)):
+async def get_current_user(authorization: Optional[str] = Header(None)):
     """Dependency to verify JWT token and get current user."""
-    token = credentials.credentials
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    token = authorization.replace("Bearer ", "")
     token_data = verify_token(token)
     
     if token_data is None:
