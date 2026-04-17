@@ -28,7 +28,6 @@
 4. [The 7 AI Agents](#-the-7-ai-agents)
 5. [Risk Scoring Engine](#-risk-scoring-engine)
 6. [Data Sources & ML Model Stack](#-data-sources--ml-model-stack)
-7. [AWS Implementation — Free Tier Blueprint](#-aws-implementation--free-tier-blueprint)
 8. [Frontend — Dashboard & AppSheet](#-frontend--dashboard--appsheet)
 9. [Key Features](#-key-features)
 10. [Tech Stack](#-tech-stack)
@@ -310,26 +309,6 @@ RS = (0.40 × 0.97) + (0.25 × 0.45) + (0.20 × 0.99) + (0.15 × 0.98) = 98 / CR
 
 ---
 
-## ☁️ AWS Implementation — Free Tier Blueprint
-
-SANJAYA is **fully buildable on the AWS Free Tier** (student account, 3 months). The architecture runs at near-zero cost during development and stays under $10 total for demo day.
-
-### Complete AWS Service Mapping
-
-| SANJAYA Component | AWS Service | Free Tier Limit | Cost |
-|-------------------|-------------|-----------------|------|
-| FastAPI backend | EC2 t2.micro | 750 hrs/month free | **ZERO** |
-| ML model + pgvector DB | EC2 t2.micro (self-hosted PostgreSQL + pgvector) | Same instance | **ZERO** |
-| Agent orchestration (LangGraph) | EC2 t2.micro | Runs on same instance | **ZERO** |
-| Dataset + model file storage | S3 Standard | 5 GB free | **ZERO** |
-| Shipment records + risk scores | DynamoDB | 25 GB + 25 WCU/RCU free | **ZERO** |
-| Scheduled API polling | EventBridge + Lambda | 1M Lambda requests/month | **ZERO** |
-| API endpoint | API Gateway | 1M REST calls/month | **ZERO** |
-| Frontend hosting | Amplify | Free hosting tier | **ZERO** |
-| Proactive alerts (email/SMS) | SNS | 1M notifications/month | **ZERO** |
-| LLM (Arjuna orchestrator) | Amazon Bedrock (Claude Sonnet) | NOT in free tier | ~$5–8 for demo |
-| Agent observability | LangSmith (3rd party) | Free tier available | **ZERO** |
-
 ### Recommended Free-Tier Architecture
 
 ```
@@ -380,22 +359,7 @@ sudo -u postgres psql -c "CREATE EXTENSION vector;"
 # 4. Run FastAPI server (keep alive with screen or systemd)
 screen -S sanjaya
 uvicorn main:app --host 0.0.0.0 --port 8000
-```
-
-### Cost Summary (3-Month Student Account)
-
-| Service | Usage | Cost |
-|---------|-------|------|
-| EC2 t2.micro | 750 hrs/month (full month) | **FREE** |
-| S3 | < 5GB storage | **FREE** |
-| Lambda | < 1M invocations/month | **FREE** |
-| DynamoDB | < 25GB | **FREE** |
-| API Gateway | < 1M calls/month | **FREE** |
-| SNS | < 1M notifications | **FREE** |
-| Amazon Bedrock (Claude) | ~50,000 tokens for demo day | ~$5–8 |
-| **TOTAL** | **Over 3 months** | **< $10** |
-
----
+----------
 
 ## 🖥️ Frontend — Dashboard & AppSheet
 
@@ -584,42 +548,6 @@ For a detailed deployment overview, refer to the [Docker Setup Guide](docker/REA
 
 ---
 
-## 🗺️ 4-Phase Build Plan (1-Day Hackathon)
-
-The full SANJAYA vision takes 4–7 days. For a 1-day hackathon, use this focused plan. **Judges see the output, not the internal architecture — a working demo beats a complete codebase.**
-
-| Phase | Time | What to Build | What to Mock |
-|-------|------|---------------|-------------|
-| **Phase 1 — Data & Model** | 0–2 hrs | Download DataCo dataset from Kaggle. Train XGBoost on `Late_delivery_risk` column (15 lines of Python). Save model with joblib. | Nothing — this is fast. Do it fully. |
-| **Phase 2 — FastAPI Backend** | 2–4 hrs | Build single `/predict` endpoint. Wire 3 real API calls: OpenWeatherMap (Vayu), NewsCatcher (Sanchar), XGBoost model (Nidhi). | Mock Darpana (port data) with static JSON. Mock Viveka (customs) with rule-based logic. |
-| **Phase 3 — AppSheet / Frontend** | 4–7 hrs | Connect AppSheet to API Gateway URL. Build input form (origin, destination, vessel ID, mode). Build risk score display with colour coding. | Skip Leaflet.js map if time is tight — a clean AppSheet table with rerouting options wins. |
-| **Phase 4 — Demo Polish** | 7–8 hrs | Pre-load the Hormuz crisis scenario as a one-click demo. Set up LangSmith to show agent trace visually. Configure SNS email alert. | Nothing — polish everything you have. |
-
----
-
-## 🎬 Demo Script — Strait of Hormuz Scenario
-
-### Opening Line *(say this first — silence the room)*
-
-> *"Right now, today — over 800 vessels are stranded in the Persian Gulf. 20,000 seafarers are trapped. Maersk, MSC, Hapag-Lloyd have all suspended operations. Every one of those companies needed SANJAYA three weeks ago. Let me show you what would have happened if they had it."*
-
-### Live Demo Sequence
-
-| Step | Duration | Action |
-|------|----------|--------|
-| **Step 1 — User Input** | 10 sec | Type into SANJAYA: *'Vessel MV Chennai Star, 8,400 TEU containers, currently at Khor Fakkan anchorage, scheduled Hormuz transit in 48 hours, destination Rotterdam. Assess risk.'* |
-| **Step 2 — Agent Traces** | 20 sec | Open LangSmith dashboard. Show each agent firing in sequence: Vayu querying OpenWeatherMap, Sanchar scanning NewsCatcher for 'Hormuz Iran conflict', Nidhi running XGBoost inference, Darpana checking AIS data. This proves the multi-agent architecture is real. |
-| **Step 3 — Risk Score Reveal** | 15 sec | Show the AppSheet dashboard: **Risk Score 98 / CRITICAL**. Show the four risk bars. Pause for effect. Let the judges read it. |
-| **Step 4 — SHAP Explanation** | 20 sec | Scroll down to the SHAP factors table. *"SANJAYA doesn't just tell you the score — it tells you exactly why. Geopolitical conflict: 42%. Port AIS blackout: 31%. Insurance premium surge: 15%. Historical delay probability: 10%. This is Explainable AI — every decision is auditable."* |
-| **Step 5 — Rerouting** | 15 sec | Show the rerouting table. *"Dijkstra's algorithm has already computed the optimal alternative. Reroute via Cape of Good Hope — same decision Maersk made. +12 days, 94% on-time probability, $180,000 additional fuel versus $1 million+ per transit through a war zone."* Click **Approve Reroute**. |
-| **Step 6 — Live Alert** | 10 sec | Show an email notification arriving on screen (pre-configured SNS trigger). *"And the logistics manager gets this alert on their phone the moment the decision is made. SANJAYA just saved this company weeks of delay and millions in risk."* |
-
-### Closing Line
-
-> *"The companies using SANJAYA today are sailing around Africa safely. The ones that aren't are still waiting for permission from Iran. That's the difference between reactive logistics and predictive intelligence. That's SANJAYA."*
-
----
-
 ## 📎 Quick Reference Links
 
 | Resource | URL |
@@ -638,7 +566,7 @@ The full SANJAYA vision takes 4–7 days. For a 1-day hackathon, use this focuse
 
 ---
 
-## 📄 One-Line Submission Abstract
+## 📄 Submission Abstract
 
 > *"SANJAYA is a multimodal, multi-agent AI system that fuses maritime AIS, road telematics, monsoon climatology, geopolitical NLP, and customs intelligence into a single composite risk score — powered by XGBoost, explained by SHAP, and routed by Dijkstra — to predict shipment delays before they happen and prescribe the optimal mitigation path, proven on the world's most critical maritime crisis: the 2026 Strait of Hormuz blockade."*
 
