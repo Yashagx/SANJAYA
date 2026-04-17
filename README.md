@@ -441,7 +441,7 @@ Secure entry point utilizing **Google Identity Services** coupled with a robust 
 
 Experience live tracking, predictive multi-modal assessments, and instant UI diff-renders for scenario planning.
 
-![Dashboard Preview 1](sanjaya/images/Screenshot%202026-04-16%20164901.png)
+![Dashboard Preview 1](sanjaya/images/Screenshot%202026-04-17%20041159.png)
 
 *Central Risk Monitoring and Aggregate AI Statistics.*
 
