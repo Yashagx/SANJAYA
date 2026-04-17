@@ -113,7 +113,7 @@ Unlike simple chatbots, SANJAYA operates as a **stateful, resumable reasoning sy
 | **VALIDATE** | Arjuna cross-checks agent outputs for consistency. If Darpana reports low congestion but Sanchar detects port-strike news, Arjuna flags the discrepancy and re-queries | Validated composite Risk Score |
 | **PERSIST** | Every confirmed delay outcome is embedded back into pgvector memory. The system learns from every shipment. DynamoDB logs full audit trail | Updated vector memory + audit log |
 
-### The 5 Architectural Layers
+### The 5 Architectural Layers..
 
 ```
   ┌──────────────────────────────────────────────────────────────┐
